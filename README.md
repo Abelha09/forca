@@ -19,9 +19,3 @@ Nenhuma instalação é necessária — é só abrir e jogar! 🎉
 
 ---
 
-## 📁 Estrutura do projeto
-
-```bash
-forca/
-├── index.html   # Arquivo principal com lógica e interface do jogo
-└── README.md    # Este arquivo
