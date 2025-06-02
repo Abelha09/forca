@@ -14,9 +14,8 @@ Nenhuma instalação é necessária — é só abrir e jogar! 🎉
 
 ## 💻 Tecnologias usadas
 
-- 🐍 Python 3 (via [PyScript](https://pyscript.net/))
 - 🌐 HTML5 + CSS3
-- 💡 JavaScript (apenas integração via PyScript)
+- 💡 JavaScript 
 
 ---
 
