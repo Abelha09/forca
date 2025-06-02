@@ -1,101 +1,133 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>🪓 Jogo da Forca</title>
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 30px;
-            background-color: #f0f0f0;
-        }
-        h1 {
-            color: #333;
-        }
-        #letras {
-            font-size: 2em;
-            letter-spacing: 10px;
-            margin: 20px 0;
-        }
-        #erros {
-            color: #c00;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            font-size: 1.2em;
-            width: 50px;
-            text-align: center;
-        }
-        button {
-            font-size: 1em;
-            padding: 5px 15px;
-            margin-left: 10px;
-        }
-        #status {
-            font-size: 1.3em;
-            margin-top: 15px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Jogo da Forca</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@latest/css/pico.min.css">
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <style>
+    body {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .forca {
+      font-size: 2rem;
+      letter-spacing: 1rem;
+    }
+    .letras-erradas {
+      color: crimson;
+    }
+    canvas {
+      margin: 1rem auto;
+      display: block;
+      background: #eee;
+    }
+  </style>
 </head>
 <body>
-    <h1>🪓 Jogo da Forca</h1>
-    <p id="letras">_ _ _ _ _ _</p>
+  <h1>🪓 Jogo da Forca</h1>
+  <canvas id="forcaCanvas" width="200" height="200"></canvas>
+  <div class="forca" id="palavra">_ _ _ _</div>
+  <p>Letras erradas: <span class="letras-erradas" id="erradas"></span></p>
+  <input id="letra" maxlength="1" placeholder="Digite uma letra" />
+  <button onclick="adivinhar()">Tentar</button>
+  <p id="mensagem"></p>
 
-    <input type="text" id="letra" maxlength="1" />
-    <button onclick="verificar_letra()">Tentar Letra</button>
+  <py-script>
+import random
+from js import document
 
-    <p id="erros">Erros: </p>
-    <p id="status"></p>
+palavras = {
+    "facil": ["casa", "bola", "sol", "pato"],
+    "medio": ["livro", "janela", "cachorro", "escola"],
+    "dificil": ["paralelepipedo", "hipopotamo", "laboratorio", "psicologia"]
+}
 
-    <py-script>
-        from js import document
+nivel = random.choice(list(palavras.keys()))
+palavra = random.choice(palavras[nivel])
+erros = []
+acertos = ["_" for _ in palavra]
+desenho = 0
+canvas = document.getElementById("forcaCanvas")
+ctx = canvas.getContext("2d")
 
-        palavra = "PYTHON"
-        letras_descobertas = ["_"] * len(palavra)
-        letras_erradas = []
-        tentativas = 6
 
-        def atualizar_tela():
-            document.getElementById("letras").innerText = " ".join(letras_descobertas)
-            document.getElementById("erros").innerText = f"Erros: {', '.join(letras_erradas)} ({tentativas} restantes)"
+def desenhar():
+    global desenho
+    if desenho == 1:
+        ctx.beginPath()
+        ctx.moveTo(10, 190)
+        ctx.lineTo(190, 190)
+        ctx.stroke()
+    elif desenho == 2:
+        ctx.beginPath()
+        ctx.moveTo(50, 190)
+        ctx.lineTo(50, 20)
+        ctx.stroke()
+    elif desenho == 3:
+        ctx.beginPath()
+        ctx.lineTo(150, 20)
+        ctx.stroke()
+    elif desenho == 4:
+        ctx.beginPath()
+        ctx.lineTo(150, 40)
+        ctx.stroke()
+    elif desenho == 5:
+        ctx.beginPath()
+        ctx.arc(150, 50, 10, 0, 2 * 3.14)
+        ctx.stroke()
+    elif desenho == 6:
+        ctx.beginPath()
+        ctx.moveTo(150, 60)
+        ctx.lineTo(150, 100)
+        ctx.stroke()
+    elif desenho == 7:
+        ctx.beginPath()
+        ctx.moveTo(150, 70)
+        ctx.lineTo(130, 90)
+        ctx.stroke()
+    elif desenho == 8:
+        ctx.beginPath()
+        ctx.moveTo(150, 70)
+        ctx.lineTo(170, 90)
+        ctx.stroke()
+    elif desenho == 9:
+        ctx.beginPath()
+        ctx.moveTo(150, 100)
+        ctx.lineTo(130, 130)
+        ctx.stroke()
+    elif desenho == 10:
+        ctx.beginPath()
+        ctx.moveTo(150, 100)
+        ctx.lineTo(170, 130)
+        ctx.stroke()
 
-        def verificar_letra():
-            global tentativas
-            status = document.getElementById("status")
-            letra_input = document.getElementById("letra")
-            letra = letra_input.value.upper()
-            letra_input.value = ""
-            letra_input.focus()
+def atualizar():
+    document.getElementById("palavra").innerHTML = " ".join(acertos)
+    document.getElementById("erradas").innerHTML = ", ".join(erros)
 
-            if not letra or len(letra) != 1 or not letra.isalpha():
-                status.innerText = "Digite apenas uma letra válida."
-                return
+def adivinhar():
+    global desenho
+    letra = str(document.getElementById("letra").value).lower()
+    document.getElementById("letra").value = ""
+    if letra in palavra:
+        for i in range(len(palavra)):
+            if palavra[i] == letra:
+                acertos[i] = letra
+    else:
+        if letra not in erros:
+            erros.append(letra)
+            desenho += 1
+            desenhar()
 
-            if letra in letras_descobertas or letra in letras_erradas:
-                status.innerText = "Você já tentou essa letra."
-                return
+    atualizar()
 
-            if letra in palavra:
-                for i, l in enumerate(palavra):
-                    if l == letra:
-                        letras_descobertas[i] = letra
-                status.innerText = "Letra correta! 👍"
-            else:
-                letras_erradas.append(letra)
-                tentativas -= 1
-                status.innerText = "Letra errada! ❌"
+    if "_" not in acertos:
+        document.getElementById("mensagem").innerHTML = f"\u2728 Você venceu! Palavra: {palavra.upper()} (nível: {nivel})"
+    elif desenho >= 10:
+        document.getElementById("mensagem").innerHTML = f"😵 Você perdeu! Era: {palavra.upper()} (nível: {nivel})"
 
-            atualizar_tela()
-
-            if "_" not in letras_descobertas:
-                status.innerText = f"🎉 Parabéns! Você venceu. A palavra era: {palavra}"
-            elif tentativas == 0:
-                status.innerText = f"💀 Fim de jogo. A palavra era: {palavra}"
-
-        atualizar_tela()
-    </py-script>
+atualizar()
+  </py-script>
 </body>
 </html>
