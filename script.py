@@ -1,6 +1,9 @@
 import random
-from js import document, console
+from js import document
 from pyodide.ffi import create_proxy
+import pyodide
+
+pyodide.setDebug(False)  # desliga debug para produção, mude para True para debug
 
 palavras = ["python", "forca", "codigo", "pyscript", "github"]
 palavra = random.choice(palavras)
@@ -12,8 +15,7 @@ max_erros = 6
 canvas = document.getElementById("forcaCanvas")
 ctx = canvas.getContext("2d")
 
-# 🔒 variável global para manter o proxy vivo
-proxy_tentar_letra = None
+proxy_tentar_letra = None  # manter proxy vivo
 
 def desenhar_forca():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -80,6 +82,7 @@ def tentar_letra(event):
         msg.innerText = "Letra errada!"
 
     atualizar_tela()
+    input_letra.focus()
 
     if "_" not in letras_certas:
         msg.innerText = f"Parabéns! Você venceu! Palavra: {palavra.upper()}"
@@ -92,8 +95,14 @@ def tentar_letra(event):
 
 def setup():
     global proxy_tentar_letra
-    proxy_tentar_letra = create_proxy(tentar_letra)  # Mantém o proxy vivo
-    document.getElementById("btnTentar").addEventListener("click", proxy_tentar_letra)
+    btn = document.getElementById("btnTentar")
+    if btn is None:
+        print("Botão btnTentar não encontrado no DOM!")
+        return
+    proxy_tentar_letra = create_proxy(tentar_letra)
+    btn.addEventListener("click", proxy_tentar_letra)
     atualizar_tela()
+    document.getElementById("inputLetra").focus()
 
 setup()
+
