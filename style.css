@@ -1,0 +1,52 @@
+body {
+  background: #121212;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+#forcaCanvas {
+  background: #222;
+  border: 2px solid #555;
+  margin: 0 auto 1rem;
+  display: block;
+  border-radius: 10px;
+}
+#palavra {
+  font-size: 2rem;
+  letter-spacing: 1rem;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+#letrasErradas {
+  color: #f00;
+  font-weight: bold;
+  min-height: 1.2rem;
+}
+#mensagem {
+  margin-top: 1rem;
+  font-weight: bold;
+  min-height: 1.5rem;
+}
+input, button {
+  font-size: 1.3rem;
+  padding: 0.5rem;
+  margin: 0.3rem;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+input {
+  width: 3rem;
+  text-align: center;
+}
+button {
+  background: #00bcd4;
+  color: #121212;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
