@@ -2,164 +2,147 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🪓 Jogo da Forca - Dark Mode</title>
-  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- PyScript CSS -->
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <!-- PyScript JS -->
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
   <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
+    /* Dark mode básico */
     body {
-      background: #121417;
-      color: #E0E6F0;
+      background: #121212;
+      color: #eee;
       font-family: 'Montserrat', sans-serif;
       text-align: center;
-      margin: 2rem auto;
-      max-width: 420px;
-      padding: 0 1rem;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      padding: 2rem 1rem;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1.5rem;
     }
+
     h1 {
       font-weight: 700;
       font-size: 2.8rem;
-      margin-bottom: 1rem;
-      letter-spacing: 0.06em;
-      color: #80b3ff;
-      text-shadow: 0 0 8px #5588ff77;
+      margin-bottom: 0.3rem;
+      user-select: none;
     }
-    /* Canvas */
+
     #forcaCanvas {
-      background: #1e222a;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #5577ff55 inset;
-      margin: 1rem auto 1.5rem;
-      display: block;
-      transition: box-shadow 0.4s ease;
-    }
-    #forcaCanvas.win {
-      box-shadow: 0 0 20px #4caf5080, 0 0 30px #81c78480 inset;
-    }
-    #forcaCanvas.lose {
-      box-shadow: 0 0 20px #e94e4e80, 0 0 30px #ef535080 inset;
-    }
-    /* Palavra (acertos) */
-    #palavra {
-      font-size: 2.4rem;
-      letter-spacing: 1.4rem;
-      font-weight: 700;
-      color: #aad1ff;
-      margin-bottom: 1.2rem;
-      user-select: text;
-      opacity: 0;
-      animation: fadeIn 1s forwards;
-    }
-    /* Letras erradas */
-    #erradas {
-      color: #ff6f6f;
-      font-weight: 600;
-      letter-spacing: 0.3rem;
-      min-height: 1.5rem;
-      display: inline-block;
-      opacity: 0;
-      animation: fadeIn 1s 0.5s forwards;
-    }
-    /* Input e botão */
-    #letra {
-      font-size: 1.6rem;
-      width: 70px;
-      text-align: center;
-      padding: 0.3rem 0;
+      background: #222;
+      border: 2px solid #555;
       border-radius: 8px;
-      border: none;
-      background: #222831;
-      color: #a9c1ff;
-      font-weight: 700;
-      letter-spacing: 0.2rem;
-      transition: box-shadow 0.3s ease;
-      margin-right: 0.6rem;
+      box-shadow: 0 0 15px #00bcd4a0;
+      margin: 0 auto 1rem;
+      display: block;
     }
-    #letra:focus {
-      outline: none;
-      box-shadow: 0 0 8px #5577ffcc;
-      background: #2a3040;
-      color: #e1e9ff;
+
+    .forca {
+      font-size: 2.5rem;
+      letter-spacing: 1.2rem;
+      font-weight: 600;
+      user-select: none;
+      color: #00bcd4;
+      text-shadow: 0 0 8px #00bcd4aa;
+      min-height: 3rem;
     }
-    button {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
+
+    .letras-erradas {
+      color: #ff6e6e;
+      font-weight: 600;
+      user-select: none;
+      min-height: 1.2rem;
+    }
+
+    #mensagem {
       font-size: 1.3rem;
-      color: #121417;
-      background: #80b3ff;
+      font-weight: 700;
+      margin-top: 0.8rem;
+      min-height: 1.6rem;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+
+    input#letra {
+      padding: 0.5rem 0.7rem;
+      font-size: 1.5rem;
+      width: 4rem;
+      text-align: center;
+      border-radius: 6px;
       border: none;
-      border-radius: 10px;
-      padding: 0.6rem 1.4rem;
+      outline: none;
+      background: #222;
+      color: #eee;
+      box-shadow: inset 0 0 8px #00bcd480;
+      transition: box-shadow 0.3s ease;
+      user-select: text;
+    }
+    input#letra:focus {
+      box-shadow: 0 0 15px #00bcd4ff;
+      background: #0d0d0d;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1.3rem;
+      border: none;
+      border-radius: 6px;
+      background: #00bcd4;
+      color: #121212;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px #3e60ff88;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      transition: background-color 0.3s ease;
       user-select: none;
     }
     button:hover {
-      background-color: #5d91ff;
-      box-shadow: 0 6px 20px #4a6bffcc;
+      background: #00a0b8;
     }
-    button:active {
-      background-color: #4278ff;
-      box-shadow: inset 0 4px 10px #2d4affcc;
-      transform: scale(0.95);
-    }
-    /* Mensagem */
-    #mensagem {
-      font-size: 1.4rem;
-      margin-top: 1.4rem;
-      min-height: 2.4rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      user-select: none;
-      transition: color 0.4s ease;
-    }
-    #mensagem.win {
-      color: #81c784;
-      animation: confetti 2s ease forwards;
-    }
-    #mensagem.lose {
-      color: #ef5350;
-      animation: shake 0.6s ease;
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
     }
 
-    /* Animations */
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    @keyframes shake {
-      10%, 90% { transform: translateX(-3px); }
-      20%, 80% { transform: translateX(5px); }
-      30%, 50%, 70% { transform: translateX(-7px); }
-      40%, 60% { transform: translateX(7px); }
-      100% { transform: translateX(0); }
-    }
-    @keyframes confetti {
-      0% { text-shadow: none; }
-      50% { text-shadow: 0 0 8px #81c784, 0 0 20px #a5d6a7; }
-      100% { text-shadow: none; }
+    footer {
+      margin-top: auto;
+      font-size: 0.9rem;
+      color: #666;
+      user-select: none;
     }
   </style>
 </head>
 <body>
+
   <h1>🪓 Jogo da Forca</h1>
+
   <canvas id="forcaCanvas" width="250" height="250"></canvas>
+
   <div class="forca" id="palavra">_ _ _ _</div>
+
   <p>Letras erradas: <span class="letras-erradas" id="erradas"></span></p>
-  <input id="letra" maxlength="1" placeholder="Digite uma letra" autocomplete="off" autofocus />
-  <button py-click="adivinhar">Tentar</button>
+
+  <input id="letra" maxlength="1" placeholder="Digite uma letra" autocomplete="off" />
+  <button py-click="adivinhar" id="btn-tentar">Tentar</button>
+
   <p id="mensagem"></p>
+
+  <footer>
+    Criado com ❤️ usando PyScript & Canvas - Hospede no GitHub Pages
+  </footer>
 
   <py-script>
 from js import document, window
 import random
 
+# Palavras agrupadas por nível
 palavras = {
     "fácil": ["casa", "bola", "sol", "pato"],
     "médio": ["livro", "janela", "cachorro", "escola"],
@@ -171,161 +154,130 @@ palavra = random.choice(palavras[nivel])
 erros = []
 acertos = ["_" for _ in palavra]
 desenho = 0
-tentativas_max = 10
+max_erros = 10
 
 canvas = document.getElementById("forcaCanvas")
 ctx = canvas.getContext("2d")
 
-def limpar_canvas():
+# Função para desenhar a forca e o boneco, etapa por etapa
+def desenhar():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-def desenhar_forca():
-    # Estrutura base
-    ctx.lineWidth = 4
-    ctx.strokeStyle = "#80b3ff"
-    ctx.beginPath()
-    # Base
-    ctx.moveTo(20, 230)
-    ctx.lineTo(180, 230)
-    # Poste
-    ctx.moveTo(50, 230)
-    ctx.lineTo(50, 20)
-    # Barra superior
-    ctx.lineTo(140, 20)
-    # Corda
-    ctx.lineTo(140, 40)
-    ctx.stroke()
-
-def desenhar_boneco(passos):
-    ctx.strokeStyle = "#aad1ff"
+    ctx.strokeStyle = "#00bcd4"
     ctx.lineWidth = 3
-    if passos >= 1:
-        # Cabeça
+
+    # Base
+    if desenho >= 1:
         ctx.beginPath()
-        ctx.arc(140, 60, 20, 0, 2*3.1416)
+        ctx.moveTo(20, 230)
+        ctx.lineTo(230, 230)
         ctx.stroke()
-    if passos >= 2:
-        # Corpo
+    # Poste vertical
+    if desenho >= 2:
         ctx.beginPath()
-        ctx.moveTo(140, 80)
-        ctx.lineTo(140, 140)
+        ctx.moveTo(50, 230)
+        ctx.lineTo(50, 20)
         ctx.stroke()
-    if passos >= 3:
-        # Braço esquerdo
+    # Viga horizontal
+    if desenho >= 3:
         ctx.beginPath()
-        ctx.moveTo(140, 90)
-        ctx.lineTo(110, 120)
+        ctx.moveTo(50, 20)
+        ctx.lineTo(180, 20)
         ctx.stroke()
-    if passos >= 4:
-        # Braço direito
+    # Corda
+    if desenho >= 4:
         ctx.beginPath()
-        ctx.moveTo(140, 90)
-        ctx.lineTo(170, 120)
+        ctx.moveTo(180, 20)
+        ctx.lineTo(180, 50)
         ctx.stroke()
-    if passos >= 5:
-        # Perna esquerda
+    # Cabeça
+    if desenho >= 5:
         ctx.beginPath()
-        ctx.moveTo(140, 140)
-        ctx.lineTo(110, 190)
+        ctx.arc(180, 70, 20, 0, 2*3.1416)
         ctx.stroke()
-    if passos >= 6:
-        # Perna direita
+    # Corpo
+    if desenho >= 6:
         ctx.beginPath()
-        ctx.moveTo(140, 140)
-        ctx.lineTo(170, 190)
+        ctx.moveTo(180, 90)
+        ctx.lineTo(180, 150)
         ctx.stroke()
-    if passos >= 7:
-        # Olhos (X)
-        ctx.strokeStyle = "#ff6f6f"
-        ctx.lineWidth = 2
-        # olho esquerdo
+    # Braço esquerdo
+    if desenho >= 7:
         ctx.beginPath()
-        ctx.moveTo(130, 50)
-        ctx.lineTo(135, 55)
-        ctx.moveTo(135, 50)
-        ctx.lineTo(130, 55)
-        # olho direito
-        ctx.moveTo(145, 50)
-        ctx.lineTo(150, 55)
-        ctx.moveTo(150, 50)
-        ctx.lineTo(145, 55)
+        ctx.moveTo(180, 110)
+        ctx.lineTo(140, 130)
         ctx.stroke()
-    if passos >= 8:
-        # Boca triste
+    # Braço direito
+    if desenho >= 8:
         ctx.beginPath()
-        ctx.moveTo(130, 75)
-        ctx.quadraticCurveTo(140, 85, 150, 75)
+        ctx.moveTo(180, 110)
+        ctx.lineTo(220, 130)
         ctx.stroke()
-    if passos >= 9:
-        # Mão esquerda caída
+    # Perna esquerda
+    if desenho >= 9:
         ctx.beginPath()
-        ctx.moveTo(110, 120)
-        ctx.lineTo(90, 130)
+        ctx.moveTo(180, 150)
+        ctx.lineTo(140, 190)
         ctx.stroke()
-    if passos >= 10:
-        # Mão direita caída
+    # Perna direita
+    if desenho >= 10:
         ctx.beginPath()
-        ctx.moveTo(170, 120)
-        ctx.lineTo(190, 130)
+        ctx.moveTo(180, 150)
+        ctx.lineTo(220, 190)
         ctx.stroke()
 
 def atualizar():
     document.getElementById("palavra").innerHTML = " ".join(acertos)
     document.getElementById("erradas").innerHTML = ", ".join(erros)
 
-def limpar_mensagem():
-    msg_el = document.getElementById("mensagem")
-    msg_el.classList.remove("win", "lose")
-    msg_el.innerHTML = ""
+    btn = document.getElementById("btn-tentar")
+    input_letra = document.getElementById("letra")
+
+    # Desabilitar botão se jogo acabou
+    if desenho >= max_erros or "_" not in acertos:
+        btn.disabled = True
+        input_letra.disabled = True
+    else:
+        btn.disabled = False
+        input_letra.disabled = False
+        input_letra.focus()
 
 def adivinhar(*args):
     global desenho
-    letra_input = document.getElementById("letra")
-    letra = str(letra_input.value).lower()
-    letra_input.value = ""
-    limpar_mensagem()
+    letra = str(document.getElementById("letra").value).lower()
+    document.getElementById("letra").value = ""
 
     if not letra.isalpha() or len(letra) != 1:
-        document.getElementById("mensagem").innerHTML = "Digite uma letra válida."
+        document.getElementById("mensagem").innerHTML = "❌ Digite uma única letra válida."
         return
 
     if letra in acertos or letra in erros:
-        document.getElementById("mensagem").innerHTML = f"Você já tentou '{letra.upper()}'."
+        document.getElementById("mensagem").innerHTML = f"⚠️ Você já tentou a letra '{letra.upper()}'."
         return
 
     if letra in palavra:
-        for i, c in enumerate(palavra):
-            if c == letra:
+        for i, char in enumerate(palavra):
+            if char == letra:
                 acertos[i] = letra
+        document.getElementById("mensagem").innerHTML = "👍 Acertou!"
     else:
         erros.append(letra)
         desenho += 1
+        desenhar()
+        document.getElementById("mensagem").innerHTML = "❌ Letra errada."
 
-    limpar_canvas()
-    desenhar_forca()
-    desenhar_boneco(desenho)
     atualizar()
 
     if "_" not in acertos:
-        msg_el = document.getElementById("mensagem")
-        msg_el.innerHTML = f"✨ Você venceu! Palavra: {palavra.upper()} (nível: {nivel})"
-        msg_el.classList.add("win")
-        canvas.classList.add("win")
-        document.getElementById("letra").disabled = True
-        document.querySelector("button").disabled = True
-    elif desenho >= tentativas_max:
-        msg_el = document.getElementById("mensagem")
-        msg_el.innerHTML = f"😵 Você perdeu! Era: {palavra.upper()} (nível: {nivel})"
-        msg_el.classList.add("lose")
-        canvas.classList.add("lose")
-        document.getElementById("letra").disabled = True
-        document.querySelector("button").disabled = True
+        document.getElementById("mensagem").innerHTML = f"🎉 Parabéns! Você venceu! Palavra: {palavra.upper()} (nível: {nivel})"
+    elif desenho >= max_erros:
+        document.getElementById("mensagem").innerHTML = f"💀 Você perdeu! A palavra era: {palavra.upper()} (nível: {nivel})"
 
-# Inicialização
-limpar_canvas()
-desenhar_forca()
-desenhar_boneco(desenho)
+# Inicializa desenho e interface
+desenhar()
 atualizar()
+
   </py-script>
+
 </body>
 </html>
+
