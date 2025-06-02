@@ -1,42 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo da Forca</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jogo da Forca - Dark Mode</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="game-container">
+  <div class="container">
     <h1>Jogo da Forca</h1>
 
-    <div class="menu">
-      <label for="dificuldade">Dificuldade:</label>
-      <select id="dificuldade">
+    <div class="top-bar">
+      <select id="nivelDificuldade">
         <option value="facil">Fácil</option>
         <option value="medio">Médio</option>
         <option value="dificil">Difícil</option>
       </select>
-      <button onclick="iniciarJogo()">Iniciar</button>
+
+      <input type="text" id="nomeJogador" placeholder="Seu nome" />
+      <button id="btnSom">🎧 Som</button>
     </div>
 
-    <div class="forca">
-      <p id="palavra"></p>
-      <p>Letras erradas: <span id="letras-erradas"></span></p>
-      <p>Pontuação: <span id="pontuacao">0</span></p>
-      <p>Tentativas restantes: <span id="tentativas"></span></p>
-      <input type="text" id="letra" maxlength="1" autofocus>
-      <button onclick="tentarLetra()">Tentar</button>
+    <canvas id="forcaCanvas" width="300" height="300"></canvas>
+
+    <p id="palavra"></p>
+    <p>Letras erradas: <span id="letrasErradas"></span></p>
+
+    <div class="entrada-letra">
+      <input type="text" id="inputLetra" maxlength="1" autocomplete="off" />
+      <button id="btnTentar">Tentar letra</button>
     </div>
 
-    <div class="mensagem" id="mensagem"></div>
+    <p id="mensagem"></p>
+    <p id="pontuacao">Pontuação: 0</p>
 
     <div class="ranking">
       <h2>Ranking</h2>
-      <ul id="ranking-list"></ul>
+      <ol id="rankingLista"></ol>
     </div>
 
+    <div class="multiplayer">
+      <button id="btnMultiplayer">Modo Multiplayer</button>
+      <p id="turnoJogador"></p>
+    </div>
   </div>
+
+  <audio id="somAcerto" src="sounds/acerto.mp3" preload="auto"></audio>
+  <audio id="somErro" src="sounds/erro.mp3" preload="auto"></audio>
+  <audio id="somVitoria" src="sounds/vitoria.mp3" preload="auto"></audio>
+  <audio id="somDerrota" src="sounds/derrota.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
