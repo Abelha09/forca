@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Jogo da Forca - Dark Mode</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Forca</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <div class="game-container">
     <h1>Jogo da Forca</h1>
 
-    <canvas id="forcaCanvas" width="300" height="300" aria-label="Desenho da forca"></canvas>
-
-    <p id="palavra" aria-live="polite"></p>
-    <p>Letras erradas: <span id="letrasErradas" aria-live="polite"></span></p>
-
-    <div class="input-group">
-      <input type="text" id="inputLetra" maxlength="1" autocomplete="off" aria-label="Digite uma letra" />
-      <button id="btnTentar" aria-label="Tentar letra">Tentar</button>
+    <div class="menu">
+      <label for="dificuldade">Dificuldade:</label>
+      <select id="dificuldade">
+        <option value="facil">Fácil</option>
+        <option value="medio">Médio</option>
+        <option value="dificil">Difícil</option>
+      </select>
+      <button onclick="iniciarJogo()">Iniciar</button>
     </div>
 
-    <p id="mensagem" aria-live="assertive"></p>
+    <div class="forca">
+      <p id="palavra"></p>
+      <p>Letras erradas: <span id="letras-erradas"></span></p>
+      <p>Pontuação: <span id="pontuacao">0</span></p>
+      <p>Tentativas restantes: <span id="tentativas"></span></p>
+      <input type="text" id="letra" maxlength="1" autofocus>
+      <button onclick="tentarLetra()">Tentar</button>
+    </div>
+
+    <div class="mensagem" id="mensagem"></div>
+
+    <div class="ranking">
+      <h2>Ranking</h2>
+      <ul id="ranking-list"></ul>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
