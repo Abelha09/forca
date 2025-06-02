@@ -1,155 +1,183 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const palavraSecretaDiv = document.getElementById('palavra-secreta');
-const tecladoDiv = document.getElementById('teclado');
-const nivelSelect = document.getElementById('nivel');
+// script.js - Código corrigido sem sons e sem btnAdivinhar
 
-const palavras = {
-  facil: ["bola", "casa", "gato", "pato", "luz"],
-  medio: ["janela", "bicicleta", "computador", "travesseiro"],
-  dificil: ["paralelepipedo", "otorrinolaringologista", "inconstitucionalidade"]
-};
+const canvas = document.getElementById("forcaCanvas");
+const ctx = canvas.getContext("2d");
 
-let palavraAtual = "";
+const palavrasFacil = ["gato", "bola", "casa", "pato", "fada"];
+const palavrasMedio = ["janela", "computador", "avião", "cachorro", "flor"];
+const palavrasDificil = ["programacao", "desenvolvimento", "extraordinario", "hipopotamo", "transcendente"];
+
+let palavra = "";
 let letrasCorretas = [];
 let letrasErradas = [];
-let tentativasRestantes = 6;
+let tentativas = 6;
+let statusJogo = "jogando"; // "vitoria", "derrota", "jogando"
+
+const btnFacil = document.getElementById("btnFacil");
+const btnMedio = document.getElementById("btnMedio");
+const btnDificil = document.getElementById("btnDificil");
+const btnNovoJogo = document.getElementById("btnNovoJogo");
+const inputLetra = document.getElementById("inputLetra");
+const displayPalavra = document.getElementById("displayPalavra");
+const displayLetrasErradas = document.getElementById("displayLetrasErradas");
+const mensagem = document.getElementById("mensagem");
+const tentativasRestantes = document.getElementById("tentativasRestantes");
+
+function escolherPalavra(nivel) {
+  letrasCorretas = [];
+  letrasErradas = [];
+  tentativas = 6;
+  statusJogo = "jogando";
+  mensagem.textContent = "";
+  inputLetra.value = "";
+  inputLetra.disabled = false;
+  tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
+
+  if (nivel === "facil") {
+    palavra = palavrasFacil[Math.floor(Math.random() * palavrasFacil.length)];
+  } else if (nivel === "medio") {
+    palavra = palavrasMedio[Math.floor(Math.random() * palavrasMedio.length)];
+  } else {
+    palavra = palavrasDificil[Math.floor(Math.random() * palavrasDificil.length)];
+  }
+  desenharForca();
+  atualizarDisplay();
+}
+
+function atualizarDisplay() {
+  let display = "";
+  for (let letra of palavra) {
+    if (letrasCorretas.includes(letra)) {
+      display += letra + " ";
+    } else {
+      display += "_ ";
+    }
+  }
+  displayPalavra.textContent = display.trim();
+  displayLetrasErradas.textContent = "Letras erradas: " + letrasErradas.join(", ");
+  tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
+}
+
+function verificarLetra() {
+  if (statusJogo !== "jogando") return;
+
+  let letra = inputLetra.value.toLowerCase();
+  inputLetra.value = "";
+
+  if (!letra.match(/^[a-záàâãéèêíïóôõöúçñ]$/i)) {
+    mensagem.textContent = "Por favor, digite uma letra válida.";
+    return;
+  }
+
+  if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
+    mensagem.textContent = "Você já tentou essa letra.";
+    return;
+  }
+
+  if (palavra.includes(letra)) {
+    letrasCorretas.push(letra);
+    mensagem.textContent = "Boa! Letra correta.";
+  } else {
+    letrasErradas.push(letra);
+    tentativas--;
+    mensagem.textContent = "Letra incorreta!";
+  }
+
+  atualizarDisplay();
+  desenharForca();
+  verificarFimJogo();
+}
+
+function verificarFimJogo() {
+  if (tentativas <= 0) {
+    statusJogo = "derrota";
+    mensagem.textContent = `Você perdeu! A palavra era: ${palavra}`;
+    inputLetra.disabled = true;
+  } else if (palavra.split("").every(letra => letrasCorretas.includes(letra))) {
+    statusJogo = "vitoria";
+    mensagem.textContent = "Parabéns! Você venceu!";
+    inputLetra.disabled = true;
+  }
+}
 
 function desenharForca() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#fff";
   ctx.lineWidth = 4;
+  ctx.strokeStyle = "#eee";
 
   // Base
   ctx.beginPath();
-  ctx.moveTo(50, 280);
-  ctx.lineTo(250, 280);
+  ctx.moveTo(20, 180);
+  ctx.lineTo(180, 180);
   ctx.stroke();
 
-  // Poste vertical
+  // Poste
   ctx.beginPath();
-  ctx.moveTo(100, 280);
-  ctx.lineTo(100, 50);
+  ctx.moveTo(50, 180);
+  ctx.lineTo(50, 20);
+  ctx.lineTo(120, 20);
+  ctx.lineTo(120, 40);
   ctx.stroke();
 
-  // Poste horizontal
-  ctx.beginPath();
-  ctx.moveTo(100, 50);
-  ctx.lineTo(200, 50);
-  ctx.stroke();
+  // Desenhar partes conforme tentativas erradas
+  let erros = 6 - tentativas;
 
-  // Corda
-  ctx.beginPath();
-  ctx.moveTo(200, 50);
-  ctx.lineTo(200, 80);
-  ctx.stroke();
-
-  const erros = 6 - tentativasRestantes;
-
+  // Cabeça
   if (erros > 0) {
-    // Cabeça
     ctx.beginPath();
-    ctx.arc(200, 100, 20, 0, Math.PI * 2);
+    ctx.arc(120, 60, 20, 0, Math.PI * 2);
     ctx.stroke();
   }
+  // Corpo
   if (erros > 1) {
-    // Corpo
     ctx.beginPath();
-    ctx.moveTo(200, 120);
-    ctx.lineTo(200, 180);
+    ctx.moveTo(120, 80);
+    ctx.lineTo(120, 130);
     ctx.stroke();
   }
+  // Braço esquerdo
   if (erros > 2) {
-    // Braço esquerdo
     ctx.beginPath();
-    ctx.moveTo(200, 140);
-    ctx.lineTo(170, 160);
+    ctx.moveTo(120, 90);
+    ctx.lineTo(90, 110);
     ctx.stroke();
   }
+  // Braço direito
   if (erros > 3) {
-    // Braço direito
     ctx.beginPath();
-    ctx.moveTo(200, 140);
-    ctx.lineTo(230, 160);
+    ctx.moveTo(120, 90);
+    ctx.lineTo(150, 110);
     ctx.stroke();
   }
+  // Perna esquerda
   if (erros > 4) {
-    // Perna esquerda
     ctx.beginPath();
-    ctx.moveTo(200, 180);
-    ctx.lineTo(170, 220);
+    ctx.moveTo(120, 130);
+    ctx.lineTo(90, 160);
     ctx.stroke();
   }
+  // Perna direita
   if (erros > 5) {
-    // Perna direita
     ctx.beginPath();
-    ctx.moveTo(200, 180);
-    ctx.lineTo(230, 220);
+    ctx.moveTo(120, 130);
+    ctx.lineTo(150, 160);
     ctx.stroke();
   }
 }
 
-function mostrarPalavra() {
-  let exibicao = palavraAtual
-    .split("")
-    .map((letra) => (letrasCorretas.includes(letra) ? letra : "_"))
-    .join(" ");
-  palavraSecretaDiv.textContent = exibicao;
-}
-
-function criarTeclado() {
-  tecladoDiv.innerHTML = "";
-  const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  alfabeto.forEach((letra) => {
-    const btn = document.createElement("button");
-    btn.textContent = letra;
-    btn.onclick = () => tentarLetra(letra.toLowerCase());
-    tecladoDiv.appendChild(btn);
-  });
-}
-
-function tentarLetra(letra) {
-  if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) return;
-
-  if (palavraAtual.includes(letra)) {
-    letrasCorretas.push(letra);
-  } else {
-    letrasErradas.push(letra);
-    tentativasRestantes--;
+// Eventos dos botões e input
+btnFacil.addEventListener("click", () => escolherPalavra("facil"));
+btnMedio.addEventListener("click", () => escolherPalavra("medio"));
+btnDificil.addEventListener("click", () => escolherPalavra("dificil"));
+btnNovoJogo.addEventListener("click", () => {
+  escolherPalavra("facil");
+  mensagem.textContent = "";
+});
+inputLetra.addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+    verificarLetra();
   }
+});
 
-  desenharForca();
-  mostrarPalavra();
-  verificarFimDeJogo();
-}
-
-function verificarFimDeJogo() {
-  const ganhou = palavraAtual.split("").every((l) => letrasCorretas.includes(l));
-  if (ganhou) {
-    alert("🎉 Parabéns! Você venceu!");
-    desabilitarTeclado();
-  } else if (tentativasRestantes === 0) {
-    alert(`💀 Você perdeu! A palavra era: ${palavraAtual}`);
-    desabilitarTeclado();
-  }
-}
-
-function desabilitarTeclado() {
-  const botoes = tecladoDiv.querySelectorAll("button");
-  botoes.forEach((btn) => btn.disabled = true);
-}
-
-function novoJogo() {
-  const nivel = nivelSelect.value;
-  const lista = palavras[nivel];
-  palavraAtual = lista[Math.floor(Math.random() * lista.length)];
-  letrasCorretas = [];
-  letrasErradas = [];
-  tentativasRestantes = 6;
-  desenharForca();
-  mostrarPalavra();
-  criarTeclado();
-}
-
-// Iniciar
-novoJogo();
+// Inicializa o jogo no modo fácil
+escolherPalavra("facil");
