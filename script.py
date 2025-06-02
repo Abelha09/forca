@@ -12,6 +12,9 @@ max_erros = 6
 canvas = document.getElementById("forcaCanvas")
 ctx = canvas.getContext("2d")
 
+# 🔒 variável global para manter o proxy vivo
+proxy_tentar_letra = None
+
 def desenhar_forca():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.strokeStyle = "#00bcd4"
@@ -88,8 +91,9 @@ def tentar_letra(event):
         input_letra.disabled = True
 
 def setup():
-    proxy = create_proxy(tentar_letra)  # Mantém o proxy vivo
-    document.getElementById("btnTentar").addEventListener("click", proxy)
+    global proxy_tentar_letra
+    proxy_tentar_letra = create_proxy(tentar_letra)  # Mantém o proxy vivo
+    document.getElementById("btnTentar").addEventListener("click", proxy_tentar_letra)
     atualizar_tela()
 
 setup()
