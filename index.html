@@ -3,281 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🪓 Jogo da Forca - Dark Mode</title>
+  <title>Jogo da Forca com PyScript</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
-
-  <!-- PyScript CSS -->
   <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-  <!-- PyScript JS -->
   <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 
   <style>
-    /* Dark mode básico */
     body {
       background: #121212;
       color: #eee;
-      font-family: 'Montserrat', sans-serif;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 2rem 1rem;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1.5rem;
+      padding: 2rem;
     }
-
-    h1 {
-      font-weight: 700;
-      font-size: 2.8rem;
-      margin-bottom: 0.3rem;
-      user-select: none;
-    }
-
     #forcaCanvas {
       background: #222;
       border: 2px solid #555;
-      border-radius: 8px;
-      box-shadow: 0 0 15px #00bcd4a0;
       margin: 0 auto 1rem;
       display: block;
+      border-radius: 10px;
     }
-
-    .forca {
-      font-size: 2.5rem;
-      letter-spacing: 1.2rem;
-      font-weight: 600;
+    #palavra {
+      font-size: 2rem;
+      letter-spacing: 1rem;
+      margin-bottom: 1rem;
       user-select: none;
-      color: #00bcd4;
-      text-shadow: 0 0 8px #00bcd4aa;
-      min-height: 3rem;
     }
-
-    .letras-erradas {
-      color: #ff6e6e;
-      font-weight: 600;
-      user-select: none;
+    #letrasErradas {
+      color: #f00;
+      font-weight: bold;
       min-height: 1.2rem;
     }
-
     #mensagem {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-top: 0.8rem;
-      min-height: 1.6rem;
-      user-select: none;
-      transition: color 0.3s ease;
+      margin-top: 1rem;
+      font-weight: bold;
+      min-height: 1.5rem;
     }
-
-    input#letra {
-      padding: 0.5rem 0.7rem;
-      font-size: 1.5rem;
-      width: 4rem;
-      text-align: center;
+    input, button {
+      font-size: 1.3rem;
+      padding: 0.5rem;
+      margin: 0.3rem;
       border-radius: 6px;
       border: none;
       outline: none;
-      background: #222;
-      color: #eee;
-      box-shadow: inset 0 0 8px #00bcd480;
-      transition: box-shadow 0.3s ease;
-      user-select: text;
     }
-    input#letra:focus {
-      box-shadow: 0 0 15px #00bcd4ff;
-      background: #0d0d0d;
+    input {
+      width: 3rem;
+      text-align: center;
     }
-
     button {
-      padding: 0.5rem 1rem;
-      font-size: 1.3rem;
-      border: none;
-      border-radius: 6px;
       background: #00bcd4;
       color: #121212;
-      font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    button:hover {
-      background: #00a0b8;
+      font-weight: bold;
     }
     button:disabled {
       background: #555;
       cursor: not-allowed;
     }
-
-    footer {
-      margin-top: auto;
-      font-size: 0.9rem;
-      color: #666;
-      user-select: none;
-    }
   </style>
 </head>
 <body>
 
-  <h1>🪓 Jogo da Forca</h1>
+  <h1>Jogo da Forca</h1>
 
   <canvas id="forcaCanvas" width="250" height="250"></canvas>
 
-  <div class="forca" id="palavra">_ _ _ _</div>
+  <div id="palavra">_ _ _ _ _</div>
 
-  <p>Letras erradas: <span class="letras-erradas" id="erradas"></span></p>
+  <div>Letras erradas: <span id="letrasErradas"></span></div>
 
-  <input id="letra" maxlength="1" placeholder="Digite uma letra" autocomplete="off" />
-  <button py-click="adivinhar" id="btn-tentar">Tentar</button>
+  <input type="text" id="inputLetra" maxlength="1" autocomplete="off" placeholder="Letra" />
+  <button id="btnTentar" py-click="tentar_letra()">Tentar</button>
 
-  <p id="mensagem"></p>
-
-  <footer>
-    Criado com ❤️ usando PyScript & Canvas - Hospede no GitHub Pages
-  </footer>
+  <div id="mensagem"></div>
 
   <py-script>
-from js import document, window
 import random
+from js import document
 
-# Palavras agrupadas por nível
-palavras = {
-    "fácil": ["casa", "bola", "sol", "pato"],
-    "médio": ["livro", "janela", "cachorro", "escola"],
-    "difícil": ["paralelepipedo", "hipopotamo", "laboratorio", "psicologia"]
-}
+palavras = ["python", "forca", "codigo", "pyscript", "github"]
 
-nivel = random.choice(list(palavras.keys()))
-palavra = random.choice(palavras[nivel])
-erros = []
-acertos = ["_" for _ in palavra]
-desenho = 0
-max_erros = 10
+palavra = random.choice(palavras)
+letras_certas = ["_" for _ in palavra]
+letras_erradas = []
+erros = 0
+max_erros = 6
 
 canvas = document.getElementById("forcaCanvas")
 ctx = canvas.getContext("2d")
 
-# Função para desenhar a forca e o boneco, etapa por etapa
-def desenhar():
+def desenhar_forca():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.strokeStyle = "#00bcd4"
     ctx.lineWidth = 3
-
     # Base
-    if desenho >= 1:
+    if erros >= 1:
         ctx.beginPath()
         ctx.moveTo(20, 230)
         ctx.lineTo(230, 230)
         ctx.stroke()
     # Poste vertical
-    if desenho >= 2:
+    if erros >= 2:
         ctx.beginPath()
         ctx.moveTo(50, 230)
         ctx.lineTo(50, 20)
         ctx.stroke()
     # Viga horizontal
-    if desenho >= 3:
+    if erros >= 3:
         ctx.beginPath()
         ctx.moveTo(50, 20)
         ctx.lineTo(180, 20)
         ctx.stroke()
     # Corda
-    if desenho >= 4:
+    if erros >= 4:
         ctx.beginPath()
         ctx.moveTo(180, 20)
         ctx.lineTo(180, 50)
         ctx.stroke()
     # Cabeça
-    if desenho >= 5:
+    if erros >= 5:
         ctx.beginPath()
-        ctx.arc(180, 70, 20, 0, 2*3.1416)
+        ctx.arc(180, 70, 20, 0, 6.28318)  # 2pi
         ctx.stroke()
     # Corpo
-    if desenho >= 6:
+    if erros >= 6:
         ctx.beginPath()
         ctx.moveTo(180, 90)
         ctx.lineTo(180, 150)
         ctx.stroke()
-    # Braço esquerdo
-    if desenho >= 7:
-        ctx.beginPath()
-        ctx.moveTo(180, 110)
-        ctx.lineTo(140, 130)
-        ctx.stroke()
-    # Braço direito
-    if desenho >= 8:
-        ctx.beginPath()
-        ctx.moveTo(180, 110)
-        ctx.lineTo(220, 130)
-        ctx.stroke()
-    # Perna esquerda
-    if desenho >= 9:
-        ctx.beginPath()
-        ctx.moveTo(180, 150)
-        ctx.lineTo(140, 190)
-        ctx.stroke()
-    # Perna direita
-    if desenho >= 10:
-        ctx.beginPath()
-        ctx.moveTo(180, 150)
-        ctx.lineTo(220, 190)
-        ctx.stroke()
 
-def atualizar():
-    document.getElementById("palavra").innerHTML = " ".join(acertos)
-    document.getElementById("erradas").innerHTML = ", ".join(erros)
+def atualizar_tela():
+    document.getElementById("palavra").innerText = " ".join(letras_certas)
+    document.getElementById("letrasErradas").innerText = ", ".join(letras_erradas)
+    desenhar_forca()
 
-    btn = document.getElementById("btn-tentar")
-    input_letra = document.getElementById("letra")
+def tentar_letra(*args):
+    global erros
+    input_letra = document.getElementById("inputLetra")
+    letra = input_letra.value.lower()
+    input_letra.value = ""
+    msg = document.getElementById("mensagem")
 
-    # Desabilitar botão se jogo acabou
-    if desenho >= max_erros or "_" not in acertos:
-        btn.disabled = True
-        input_letra.disabled = True
-    else:
-        btn.disabled = False
-        input_letra.disabled = False
-        input_letra.focus()
-
-def adivinhar(*args):
-    global desenho
-    letra = str(document.getElementById("letra").value).lower()
-    document.getElementById("letra").value = ""
-
-    if not letra.isalpha() or len(letra) != 1:
-        document.getElementById("mensagem").innerHTML = "❌ Digite uma única letra válida."
+    if len(letra) != 1 or not letra.isalpha():
+        msg.innerText = "Digite uma única letra válida."
         return
 
-    if letra in acertos or letra in erros:
-        document.getElementById("mensagem").innerHTML = f"⚠️ Você já tentou a letra '{letra.upper()}'."
+    if letra in letras_certas or letra in letras_erradas:
+        msg.innerText = f"Você já tentou a letra '{letra}'."
         return
 
     if letra in palavra:
-        for i, char in enumerate(palavra):
-            if char == letra:
-                acertos[i] = letra
-        document.getElementById("mensagem").innerHTML = "👍 Acertou!"
+        for idx, ch in enumerate(palavra):
+            if ch == letra:
+                letras_certas[idx] = letra
+        msg.innerText = "Letra correta!"
     else:
-        erros.append(letra)
-        desenho += 1
-        desenhar()
-        document.getElementById("mensagem").innerHTML = "❌ Letra errada."
+        letras_erradas.append(letra)
+        erros += 1
+        msg.innerText = "Letra errada!"
 
-    atualizar()
+    atualizar_tela()
 
-    if "_" not in acertos:
-        document.getElementById("mensagem").innerHTML = f"🎉 Parabéns! Você venceu! Palavra: {palavra.upper()} (nível: {nivel})"
-    elif desenho >= max_erros:
-        document.getElementById("mensagem").innerHTML = f"💀 Você perdeu! A palavra era: {palavra.upper()} (nível: {nivel})"
+    if "_" not in letras_certas:
+        msg.innerText = f"Parabéns! Você venceu! Palavra: {palavra.upper()}"
+        document.getElementById("btnTentar").disabled = True
+        input_letra.disabled = True
+    elif erros >= max_erros:
+        msg.innerText = f"Você perdeu! A palavra era: {palavra.upper()}"
+        document.getElementById("btnTentar").disabled = True
+        input_letra.disabled = True
 
-# Inicializa desenho e interface
-desenhar()
-atualizar()
+atualizar_tela()
 
   </py-script>
 
 </body>
 </html>
-
