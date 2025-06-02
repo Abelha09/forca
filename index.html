@@ -74,7 +74,7 @@
   <div>Letras erradas: <span id="letrasErradas"></span></div>
 
   <input type="text" id="inputLetra" maxlength="1" autocomplete="off" placeholder="Letra" />
-  <button id="btnTentar" py-click="tentar_letra()">Tentar</button>
+  <button id="btnTentar" py-click="jogo.tentar_letra()">Tentar</button>
 
   <div id="mensagem"></div>
 
@@ -82,101 +82,98 @@
 import random
 from js import document
 
-palavras = ["python", "forca", "codigo", "pyscript", "github"]
+class JogoForca:
+    def __init__(self):
+        self.palavras = ["python", "forca", "codigo", "pyscript", "github"]
+        self.palavra = random.choice(self.palavras)
+        self.letras_certas = ["_" for _ in self.palavra]
+        self.letras_erradas = []
+        self.erros = 0
+        self.max_erros = 6
 
-palavra = random.choice(palavras)
-letras_certas = ["_" for _ in palavra]
-letras_erradas = []
-erros = 0
-max_erros = 6
+        self.canvas = document.getElementById("forcaCanvas")
+        self.ctx = self.canvas.getContext("2d")
 
-canvas = document.getElementById("forcaCanvas")
-ctx = canvas.getContext("2d")
+        self.atualizar_tela()
 
-def desenhar_forca():
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.strokeStyle = "#00bcd4"
-    ctx.lineWidth = 3
-    # Base
-    if erros >= 1:
-        ctx.beginPath()
-        ctx.moveTo(20, 230)
-        ctx.lineTo(230, 230)
-        ctx.stroke()
-    # Poste vertical
-    if erros >= 2:
-        ctx.beginPath()
-        ctx.moveTo(50, 230)
-        ctx.lineTo(50, 20)
-        ctx.stroke()
-    # Viga horizontal
-    if erros >= 3:
-        ctx.beginPath()
-        ctx.moveTo(50, 20)
-        ctx.lineTo(180, 20)
-        ctx.stroke()
-    # Corda
-    if erros >= 4:
-        ctx.beginPath()
-        ctx.moveTo(180, 20)
-        ctx.lineTo(180, 50)
-        ctx.stroke()
-    # Cabeça
-    if erros >= 5:
-        ctx.beginPath()
-        ctx.arc(180, 70, 20, 0, 6.28318)  # 2pi
-        ctx.stroke()
-    # Corpo
-    if erros >= 6:
-        ctx.beginPath()
-        ctx.moveTo(180, 90)
-        ctx.lineTo(180, 150)
-        ctx.stroke()
+    def desenhar_forca(self):
+        ctx = self.ctx
+        ctx.clearRect(0, 0, self.canvas.width, self.canvas.height)
+        ctx.strokeStyle = "#00bcd4"
+        ctx.lineWidth = 3
+        if self.erros >= 1:
+            ctx.beginPath()
+            ctx.moveTo(20, 230)
+            ctx.lineTo(230, 230)
+            ctx.stroke()
+        if self.erros >= 2:
+            ctx.beginPath()
+            ctx.moveTo(50, 230)
+            ctx.lineTo(50, 20)
+            ctx.stroke()
+        if self.erros >= 3:
+            ctx.beginPath()
+            ctx.moveTo(50, 20)
+            ctx.lineTo(180, 20)
+            ctx.stroke()
+        if self.erros >= 4:
+            ctx.beginPath()
+            ctx.moveTo(180, 20)
+            ctx.lineTo(180, 50)
+            ctx.stroke()
+        if self.erros >= 5:
+            ctx.beginPath()
+            ctx.arc(180, 70, 20, 0, 6.28318)
+            ctx.stroke()
+        if self.erros >= 6:
+            ctx.beginPath()
+            ctx.moveTo(180, 90)
+            ctx.lineTo(180, 150)
+            ctx.stroke()
 
-def atualizar_tela():
-    document.getElementById("palavra").innerText = " ".join(letras_certas)
-    document.getElementById("letrasErradas").innerText = ", ".join(letras_erradas)
-    desenhar_forca()
+    def atualizar_tela(self):
+        document.getElementById("palavra").innerText = " ".join(self.letras_certas)
+        document.getElementById("letrasErradas").innerText = ", ".join(self.letras_erradas)
+        self.desenhar_forca()
 
-def tentar_letra(*args):
-    global erros
-    input_letra = document.getElementById("inputLetra")
-    letra = input_letra.value.lower()
-    input_letra.value = ""
-    msg = document.getElementById("mensagem")
+    def tentar_letra(self, *args):
+        input_letra = document.getElementById("inputLetra")
+        letra = input_letra.value.lower()
+        input_letra.value = ""
+        msg = document.getElementById("mensagem")
 
-    if len(letra) != 1 or not letra.isalpha():
-        msg.innerText = "Digite uma única letra válida."
-        return
+        if len(letra) != 1 or not letra.isalpha():
+            msg.innerText = "Digite uma única letra válida."
+            return
 
-    if letra in letras_certas or letra in letras_erradas:
-        msg.innerText = f"Você já tentou a letra '{letra}'."
-        return
+        if letra in self.letras_certas or letra in self.letras_erradas:
+            msg.innerText = f"Você já tentou a letra '{letra}'."
+            return
 
-    if letra in palavra:
-        for idx, ch in enumerate(palavra):
-            if ch == letra:
-                letras_certas[idx] = letra
-        msg.innerText = "Letra correta!"
-    else:
-        letras_erradas.append(letra)
-        erros += 1
-        msg.innerText = "Letra errada!"
+        if letra in self.palavra:
+            for idx, ch in enumerate(self.palavra):
+                if ch == letra:
+                    self.letras_certas[idx] = letra
+            msg.innerText = "Letra correta!"
+        else:
+            self.letras_erradas.append(letra)
+            self.erros += 1
+            msg.innerText = "Letra errada!"
 
-    atualizar_tela()
+        self.atualizar_tela()
 
-    if "_" not in letras_certas:
-        msg.innerText = f"Parabéns! Você venceu! Palavra: {palavra.upper()}"
-        document.getElementById("btnTentar").disabled = True
-        input_letra.disabled = True
-    elif erros >= max_erros:
-        msg.innerText = f"Você perdeu! A palavra era: {palavra.upper()}"
-        document.getElementById("btnTentar").disabled = True
-        input_letra.disabled = True
+        if "_" not in self.letras_certas:
+            msg.innerText = f"Parabéns! Você venceu! Palavra: {self.palavra.upper()}"
+            document.getElementById("btnTentar").disabled = True
+            input_letra.disabled = True
+        elif self.erros >= self.max_erros:
+            msg.innerText = f"Você perdeu! A palavra era: {self.palavra.upper()}"
+            document.getElementById("btnTentar").disabled = True
+            input_letra.disabled = True
 
-atualizar_tela()
-
+jogo = JogoForca()
   </py-script>
 
 </body>
 </html>
+
