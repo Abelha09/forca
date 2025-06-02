@@ -1,6 +1,6 @@
-# 🪓 Jogo da Forca - Feito com PyScript
+# 🪓 Jogo da Forca
 
-Bem-vindo ao clássico **Jogo da Forca**, recriado para rodar direto no navegador com **HTML + Python (via PyScript)**!  
+Bem-vindo ao clássico **Jogo da Forca**, recriado para rodar direto no navegador com **HTML + Javascript**!  
 Nenhuma instalação é necessária — é só abrir e jogar! 🎉
 
 ---
