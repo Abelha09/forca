@@ -1,25 +1,150 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dark mode background */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  background: linear-gradient(135deg, #121212, #1e1e1e);
+  color: #eeeeee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
-#forcaCanvas {
-  border: 1px solid #ccc;
-  display: block;
-  margin-bottom: 15px;
-}
-#inputLetra {
-  width: 30px;
-  text-transform: lowercase;
-  font-size: 18px;
+
+.container {
+  max-width: 400px;
+  width: 100%;
   text-align: center;
+  background: #222831;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  transition: background-color 0.4s ease;
 }
-#btnTentar {
-  font-size: 16px;
-  padding: 5px 10px;
-  margin-left: 10px;
+
+h1 {
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #00adb5;
+  text-shadow: 0 0 10px #00adb5aa;
+  user-select: none;
 }
-#mensagem {
+
+/* Canvas styles */
+#forcaCanvas {
+  border: 2px solid #00adb5;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #393e46;
+  box-shadow: 0 0 20px #00adb5aa;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Word display */
+#palavra {
+  font-size: 2rem;
+  letter-spacing: 0.3rem;
+  margin-bottom: 10px;
+  color: #eeeeee;
+  user-select: none;
+  text-shadow: 0 0 8px #00adb5cc;
+}
+
+/* Letters wrong */
+#letrasErradas {
+  color: #ff5722;
+  font-weight: 600;
+  user-select: none;
+  transition: color 0.3s ease;
+  min-height: 24px;
+}
+
+/* Input group */
+.input-group {
   margin-top: 15px;
-  font-weight: bold;
-  color: #007acc;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+input[type="text"] {
+  font-size: 1.8rem;
+  width: 50px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #00adb5;
+  background-color: #222831;
+  color: #eeeeee;
+  text-align: center;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  user-select: none;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #ff5722;
+  background-color: #393e46;
+  box-shadow: 0 0 8px #ff5722aa;
+}
+
+button {
+  background-color: #00adb5;
+  border: none;
+  border-radius: 8px;
+  color: #222831;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+
+button:hover:not(:disabled),
+button:focus:not(:disabled) {
+  background-color: #ff5722;
+  box-shadow: 0 0 12px #ff5722aa;
+  outline: none;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Message styles */
+#mensagem {
+  margin-top: 20px;
+  font-weight: 700;
+  font-size: 1.3rem;
+  min-height: 28px;
+  color: #00adb5;
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+  user-select: none;
+  text-shadow: 0 0 12px #00adb5cc;
+}
+
+#mensagem.erro {
+  color: #ff5722;
+  text-shadow: 0 0 12px #ff5722cc;
+}
+
+#mensagem.sucesso {
+  color: #4caf50;
+  text-shadow: 0 0 12px #4caf50cc;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
