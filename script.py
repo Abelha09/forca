@@ -1,8 +1,8 @@
 import random
 from js import document, console
+from pyodide.ffi import create_proxy
 
 palavras = ["python", "forca", "codigo", "pyscript", "github"]
-
 palavra = random.choice(palavras)
 letras_certas = ["_" for _ in palavra]
 letras_erradas = []
@@ -87,11 +87,9 @@ def tentar_letra(event):
         document.getElementById("btnTentar").disabled = True
         input_letra.disabled = True
 
-# Associar o evento de clique ao botão após o carregamento da página
 def setup():
-    btn = document.getElementById("btnTentar")
-    btn.addEventListener("click", tentar_letra)
+    proxy = create_proxy(tentar_letra)  # Mantém o proxy vivo
+    document.getElementById("btnTentar").addEventListener("click", proxy)
     atualizar_tela()
 
 setup()
-
