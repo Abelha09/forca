@@ -2,26 +2,30 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Jogo da Forca</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Jogo da Forca</h1>
-    <canvas id="canvas" width="300" height="300"></canvas>
-    <div id="palavra-secreta">_ _ _ _ _</div>
+    <canvas id="forcaCanvas" width="300" height="200"></canvas>
 
-    <div id="teclado"></div>
+    <div id="displayPalavra" class="palavra"></div>
+
+    <input type="text" id="inputLetra" maxlength="1" placeholder="Digite uma letra" autofocus />
+
+    <div id="displayLetrasErradas" class="letras-erradas"></div>
+
+    <div id="tentativasRestantes" class="tentativas"></div>
+
+    <div id="mensagem" class="mensagem"></div>
 
     <div class="controles">
-      <label for="nivel">Nível:</label>
-      <select id="nivel">
-        <option value="facil">Fácil</option>
-        <option value="medio">Médio</option>
-        <option value="dificil">Difícil</option>
-      </select>
-      <button onclick="novoJogo()">Novo Jogo</button>
+      <button id="btnFacil">Fácil</button>
+      <button id="btnMedio">Médio</button>
+      <button id="btnDificil">Difícil</button>
+      <button id="btnNovoJogo">Novo Jogo</button>
     </div>
   </div>
 
