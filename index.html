@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Jogo da Forca PyScript</title>
+  <!-- Link PyScript CSS e JS via CDN jsDelivr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pyscript/pyscript@2023.11.1/pyscript.css" />
+  <script defer src="https://cdn.jsdelivr.net/gh/pyscript/pyscript@2023.11.1/pyscript.js"></script>
+  
+  <!-- Seu CSS local -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://pyscript.net/2023.11.1/pyscript.css" />
-  <script defer src="https://pyscript.net/2023.11.1/pyscript.js"></script>
 </head>
 <body>
 
@@ -20,6 +23,7 @@
 
   <p id="mensagem"></p>
 
+  <!-- Script PyScript externo -->
   <py-script src="script.py"></py-script>
 
 </body>
