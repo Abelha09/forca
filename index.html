@@ -2,53 +2,28 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jogo da Forca - Dark Mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogo da Forca</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Jogo da Forca</h1>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <div id="palavra-secreta">_ _ _ _ _</div>
 
-    <div class="top-bar">
-      <select id="nivelDificuldade">
+    <div id="teclado"></div>
+
+    <div class="controles">
+      <label for="nivel">Nível:</label>
+      <select id="nivel">
         <option value="facil">Fácil</option>
         <option value="medio">Médio</option>
         <option value="dificil">Difícil</option>
       </select>
-
-      <input type="text" id="nomeJogador" placeholder="Seu nome" />
-      <button id="btnSom">🎧 Som</button>
-    </div>
-
-    <canvas id="forcaCanvas" width="300" height="300"></canvas>
-
-    <p id="palavra"></p>
-    <p>Letras erradas: <span id="letrasErradas"></span></p>
-
-    <div class="entrada-letra">
-      <input type="text" id="inputLetra" maxlength="1" autocomplete="off" />
-      <button id="btnTentar">Tentar letra</button>
-    </div>
-
-    <p id="mensagem"></p>
-    <p id="pontuacao">Pontuação: 0</p>
-
-    <div class="ranking">
-      <h2>Ranking</h2>
-      <ol id="rankingLista"></ol>
-    </div>
-
-    <div class="multiplayer">
-      <button id="btnMultiplayer">Modo Multiplayer</button>
-      <p id="turnoJogador"></p>
+      <button onclick="novoJogo()">Novo Jogo</button>
     </div>
   </div>
-
-  <audio id="somAcerto" src="sounds/acerto.mp3" preload="auto"></audio>
-  <audio id="somErro" src="sounds/erro.mp3" preload="auto"></audio>
-  <audio id="somVitoria" src="sounds/vitoria.mp3" preload="auto"></audio>
-  <audio id="somDerrota" src="sounds/derrota.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
