@@ -1,134 +1,123 @@
-const palavras = ["python", "forca", "codigo", "javascript", "github"];
-let palavra = palavras[Math.floor(Math.random() * palavras.length)];
-let letrasCertas = Array(palavra.length).fill("_");
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const palavraSpan = document.getElementById('palavra');
+const letrasErradasSpan = document.getElementById('letrasErradas');
+const mensagemDiv = document.getElementById('mensagem');
+const letraInput = document.getElementById('letraInput');
+const btnAdivinhar = document.getElementById('btnAdivinhar');
+const btnReiniciar = document.getElementById('btnReiniciar');
+const dificuldadeSelect = document.getElementById('dificuldade');
+
+const somAcerto = new Audio('assets/acerto.mp3');
+const somErro = new Audio('assets/erro.mp3');
+const somVitoria = new Audio('assets/vitoria.mp3');
+const somDerrota = new Audio('assets/derrota.mp3');
+
+let palavra = '';
+let palavraOculta = [];
 let letrasErradas = [];
-let erros = 0;
-const maxErros = 6;
+let tentativas = 0;
+let pontos = 0;
 
-const canvas = document.getElementById("forcaCanvas");
-const ctx = canvas.getContext("2d");
+// Dicionário de palavras por dificuldade
+const palavras = {
+  facil: ['casa', 'bola', 'uva', 'gato', 'sol'],
+  medio: ['carro', 'janela', 'livro', 'cidade', 'cachorro'],
+  dificil: ['computador', 'astronauta', 'marcenaria', 'filosofia', 'democracia']
+};
 
-const palavraEl = document.getElementById("palavra");
-const letrasErradasEl = document.getElementById("letrasErradas");
-const mensagemEl = document.getElementById("mensagem");
-const inputLetra = document.getElementById("inputLetra");
-const btnTentar = document.getElementById("btnTentar");
-
-function desenharForca() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#00adb5";
-  ctx.lineWidth = 3;
-  ctx.shadowColor = "#00adb5cc";
-  ctx.shadowBlur = 6;
-
-  if (erros >= 1) {
-    ctx.beginPath();
-    ctx.moveTo(20, 230);
-    ctx.lineTo(230, 230);
-    ctx.stroke();
-  }
-  if (erros >= 2) {
-    ctx.beginPath();
-    ctx.moveTo(50, 230);
-    ctx.lineTo(50, 20);
-    ctx.stroke();
-  }
-  if (erros >= 3) {
-    ctx.beginPath();
-    ctx.moveTo(50, 20);
-    ctx.lineTo(180, 20);
-    ctx.stroke();
-  }
-  if (erros >= 4) {
-    ctx.beginPath();
-    ctx.moveTo(180, 20);
-    ctx.lineTo(180, 50);
-    ctx.stroke();
-  }
-  if (erros >= 5) {
-    ctx.beginPath();
-    ctx.arc(180, 70, 20, 0, 2 * Math.PI);
-    ctx.stroke();
-  }
-  if (erros >= 6) {
-    ctx.beginPath();
-    ctx.moveTo(180, 90);
-    ctx.lineTo(180, 150);
-    ctx.stroke();
-  }
-  ctx.shadowBlur = 0; // Reset shadow after drawing
+function escolherPalavra() {
+  const nivel = dificuldadeSelect.value;
+  const lista = palavras[nivel];
+  palavra = lista[Math.floor(Math.random() * lista.length)].toUpperCase();
+  palavraOculta = Array(palavra.length).fill('_');
+  letrasErradas = [];
+  tentativas = 0;
+  atualizarTela();
+  desenharForca(0);
 }
 
 function atualizarTela() {
-  palavraEl.textContent = letrasCertas.join(" ");
-  letrasErradasEl.textContent = letrasErradas.join(", ");
-  desenharForca();
+  palavraSpan.textContent = palavraOculta.join(' ');
+  letrasErradasSpan.textContent = letrasErradas.join(', ');
+  mensagemDiv.textContent = '';
+  letraInput.value = '';
+  letraInput.focus();
 }
 
-function mostrarMensagem(texto, tipo = "normal") {
-  mensagemEl.textContent = texto;
-  mensagemEl.className = ""; // Remove classes
-
-  if (tipo === "erro") {
-    mensagemEl.classList.add("erro");
-  } else if (tipo === "sucesso") {
-    mensagemEl.classList.add("sucesso");
-  }
-
-  // Reinicia animação para poder disparar novamente
-  mensagemEl.style.animation = "none";
-  mensagemEl.offsetHeight; // trigger reflow
-  mensagemEl.style.animation = null;
-}
-
-function tentarLetra() {
-  let letra = inputLetra.value.toLowerCase();
-  inputLetra.value = "";
-  mostrarMensagem("", "normal");
-
-  if (!letra.match(/^[a-z]$/)) {
-    mostrarMensagem("Digite uma letra válida!", "erro");
-    return;
-  }
-
-  if (letrasCertas.includes(letra) || letrasErradas.includes(letra)) {
-    mostrarMensagem(`Você já tentou a letra "${letra}".`, "erro");
-    return;
-  }
+function verificarLetra() {
+  const letra = letraInput.value.toUpperCase();
+  if (!letra.match(/[A-ZÀ-Ú]/) || letra.length !== 1) return;
 
   if (palavra.includes(letra)) {
-    for (let i = 0; i < palavra.length; i++) {
-      if (palavra[i] === letra) {
-        letrasCertas[i] = letra;
+    let acertou = false;
+    palavra.split('').forEach((l, i) => {
+      if (l === letra) {
+        palavraOculta[i] = letra;
+        acertou = true;
       }
-    }
-    mostrarMensagem("Letra correta!", "sucesso");
-  } else {
+    });
+    if (acertou) somAcerto.play();
+  } else if (!letrasErradas.includes(letra)) {
     letrasErradas.push(letra);
-    erros++;
-    mostrarMensagem("Letra errada!", "erro");
+    tentativas++;
+    desenharForca(tentativas);
+    somErro.play();
   }
 
   atualizarTela();
+  verificarFim();
+}
 
-  if (!letrasCertas.includes("_")) {
-    mostrarMensagem(`Parabéns! Você venceu! Palavra: ${palavra.toUpperCase()}`, "sucesso");
-    btnTentar.disabled = true;
-    inputLetra.disabled = true;
-  } else if (erros >= maxErros) {
-    mostrarMensagem(`Você perdeu! A palavra era: ${palavra.toUpperCase()}`, "erro");
-    btnTentar.disabled = true;
-    inputLetra.disabled = true;
+function verificarFim() {
+  if (!palavraOculta.includes('_')) {
+    mensagemDiv.textContent = '🎉 Você venceu!';
+    somVitoria.play();
+    pontos += 10;
+    btnAdivinhar.disabled = true;
+    letraInput.disabled = true;
+  } else if (tentativas >= 6) {
+    mensagemDiv.textContent = `😵 Você perdeu! A palavra era: ${palavra}`;
+    somDerrota.play();
+    btnAdivinhar.disabled = true;
+    letraInput.disabled = true;
   }
 }
 
-btnTentar.addEventListener("click", tentarLetra);
+function reiniciarJogo() {
+  btnAdivinhar.disabled = false;
+  letraInput.disabled = false;
+  escolherPalavra();
+}
 
-inputLetra.addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
-    tentarLetra();
-  }
+// Desenha a forca e boneco
+function desenharForca(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 3;
+
+  // Estrutura
+  ctx.beginPath(); ctx.moveTo(10, 190); ctx.lineTo(190, 190); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(50, 190); ctx.lineTo(50, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(50, 10); ctx.lineTo(150, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(150, 10); ctx.lineTo(150, 30); ctx.stroke();
+
+  // Boneco
+  if (t > 0) { ctx.beginPath(); ctx.arc(150, 50, 20, 0, Math.PI * 2); ctx.stroke(); }
+  if (t > 1) { ctx.beginPath(); ctx.moveTo(150, 70); ctx.lineTo(150, 120); ctx.stroke(); }
+  if (t > 2) { ctx.beginPath(); ctx.moveTo(150, 80); ctx.lineTo(120, 100); ctx.stroke(); }
+  if (t > 3) { ctx.beginPath(); ctx.moveTo(150, 80); ctx.lineTo(180, 100); ctx.stroke(); }
+  if (t > 4) { ctx.beginPath(); ctx.moveTo(150, 120); ctx.lineTo(120, 150); ctx.stroke(); }
+  if (t > 5) { ctx.beginPath(); ctx.moveTo(150, 120); ctx.lineTo(180, 150); ctx.stroke(); }
+}
+
+// Eventos
+btnAdivinhar.addEventListener('click', verificarLetra);
+btnReiniciar.addEventListener('click', reiniciarJogo);
+letraInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter') verificarLetra();
 });
+dificuldadeSelect.addEventListener('change', reiniciarJogo);
 
-// Inicializa a tela
-atualizarTela();
+// Inicial
+reiniciarJogo();
