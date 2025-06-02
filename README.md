@@ -10,7 +10,7 @@ Nenhuma instalação é necessária — é só abrir e jogar! 🎉
 ## 🚀 Como jogar
 
 1. **Acesse o jogo** (se hospedado):  
-   👉 [`https://seunome.github.io/forca`](https://seunome.github.io/forca)
+   👉 [`https://abelha09.github.io/forca`](https://abelha09.github.io/forca)
 
 2. **Ou jogue localmente:**
    - Baixe o arquivo [`index.html`](index.html)
