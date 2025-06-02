@@ -1,5 +1,5 @@
 import random
-from js import document
+from js import document, console
 
 palavras = ["python", "forca", "codigo", "pyscript", "github"]
 
@@ -51,7 +51,7 @@ def atualizar_tela():
     document.getElementById("letrasErradas").innerText = ", ".join(letras_erradas)
     desenhar_forca()
 
-def tentar_letra(*args):
+def tentar_letra(event):
     global erros
     input_letra = document.getElementById("inputLetra")
     letra = input_letra.value.lower()
@@ -87,4 +87,11 @@ def tentar_letra(*args):
         document.getElementById("btnTentar").disabled = True
         input_letra.disabled = True
 
-atualizar_tela()
+# Associar o evento de clique ao botão após o carregamento da página
+def setup():
+    btn = document.getElementById("btnTentar")
+    btn.addEventListener("click", tentar_letra)
+    atualizar_tela()
+
+setup()
+
