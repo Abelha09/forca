@@ -2,29 +2,26 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Jogo da Forca PyScript</title>
-  <!-- Link PyScript CSS e JS via CDN jsDelivr -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pyscript/pyscript@2023.11.1/pyscript.css" />
-  <script defer src="https://cdn.jsdelivr.net/gh/pyscript/pyscript@2023.11.1/pyscript.js"></script>
-  
-  <!-- Seu CSS local -->
+  <title>Jogo da Forca - Dark Mode</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="container">
+    <h1>Jogo da Forca</h1>
 
-  <h2>Jogo da Forca com PyScript</h2>
-  <canvas id="forcaCanvas" width="300" height="300"></canvas>
+    <canvas id="forcaCanvas" width="300" height="300" aria-label="Desenho da forca"></canvas>
 
-  <p id="palavra"></p>
-  <p>Letras erradas: <span id="letrasErradas"></span></p>
+    <p id="palavra" aria-live="polite"></p>
+    <p>Letras erradas: <span id="letrasErradas" aria-live="polite"></span></p>
 
-  <input type="text" id="inputLetra" maxlength="1" autocomplete="off" />
-  <button id="btnTentar">Tentar letra</button>
+    <div class="input-group">
+      <input type="text" id="inputLetra" maxlength="1" autocomplete="off" aria-label="Digite uma letra" />
+      <button id="btnTentar" aria-label="Tentar letra">Tentar</button>
+    </div>
 
-  <p id="mensagem"></p>
+    <p id="mensagem" aria-live="assertive"></p>
+  </div>
 
-  <!-- Script PyScript externo -->
-  <py-script src="script.py"></py-script>
-
+  <script src="script.js"></script>
 </body>
 </html>
