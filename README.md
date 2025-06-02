@@ -3,18 +3,12 @@
 Bem-vindo ao clássico **Jogo da Forca**, recriado para rodar direto no navegador com **HTML + Python (via PyScript)**!  
 Nenhuma instalação é necessária — é só abrir e jogar! 🎉
 
-![forca-preview](https://user-images.githubusercontent.com/your-image-path/preview.png)
-
 ---
 
 ## 🚀 Como jogar
 
-1. **Acesse o jogo** (se hospedado):  
+1. **Acesse o jogo**:  
    👉 [`https://abelha09.github.io/forca`](https://abelha09.github.io/forca)
-
-2. **Ou jogue localmente:**
-   - Baixe o arquivo [`index.html`](index.html)
-   - Clique duas vezes para abrir no navegador
 
 ---
 
