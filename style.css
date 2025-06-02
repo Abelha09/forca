@@ -1,7 +1,9 @@
+/* style.css */
+
 body {
   background-color: #121212;
   color: #f0f0f0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   display: flex;
@@ -12,65 +14,147 @@ body {
 
 .container {
   max-width: 600px;
-  padding: 20px;
+  padding: 30px 20px 40px 20px;
   background-color: #1e1e1e;
   border-radius: 16px;
-  box-shadow: 0 0 10px #00000070;
+  box-shadow: 0 0 15px #000000aa;
   text-align: center;
+  width: 90%;
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #ffffff;
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-shadow: 0 0 6px #66bb6a;
 }
 
-canvas {
+#forcaCanvas {
   background-color: #2c2c2c;
   border: 2px solid #555;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin: 0 auto 25px auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
-#palavra-secreta {
-  font-size: 2rem;
-  letter-spacing: 10px;
-  margin: 20px 0;
+#displayPalavra {
+  font-size: 2.4rem;
+  letter-spacing: 12px;
+  margin: 25px 0 30px 0;
+  font-weight: 600;
+  user-select: none;
 }
 
-#teclado {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
-  gap: 10px;
-  margin: 20px 0;
-}
-
-button {
-  padding: 10px;
-  font-size: 1rem;
+#inputLetra {
+  font-size: 1.6rem;
+  padding: 10px 12px;
+  width: 120px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1.5px solid #555;
   background-color: #333;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  color: #f0f0f0;
+  margin-bottom: 30px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-button:hover {
-  background-color: #555;
+#inputLetra:focus {
+  outline: none;
+  border-color: #66bb6a;
+  box-shadow: 0 0 12px #66bb6a;
+}
+
+#displayLetrasErradas {
+  color: #ff6b6b;
+  font-size: 1.3rem;
+  min-height: 26px;
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+#tentativasRestantes {
+  font-size: 1.2rem;
+  color: #cccccc;
+  margin-bottom: 25px;
+  user-select: none;
+}
+
+#mensagem {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-top: 15px;
+  min-height: 32px;
+  user-select: none;
+  color: #66bb6a;
+  text-shadow: 0 0 4px #66bb6a;
 }
 
 .controles {
-  margin-top: 20px;
+  margin-top: 30px;
   display: flex;
-  gap: 10px;
+  gap: 18px;
   justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
 }
 
 select {
   background-color: #333;
-  color: white;
-  padding: 6px;
-  border: 1px solid #555;
-  border-radius: 8px;
+  color: #f0f0f0;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  min-width: 140px;
+}
+
+select:hover,
+select:focus {
+  background-color: #66bb6a;
+  color: #121212;
+  outline: none;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  background-color: #333;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-width: 140px;
+  font-weight: 600;
+  box-shadow: 0 0 8px transparent;
+  user-select: none;
+}
+
+button:hover,
+button:focus {
+  background-color: #66bb6a;
+  color: #121212;
+  box-shadow: 0 0 15px #66bb6a;
+  outline: none;
+}
+
+/* Responsividade simples */
+@media (max-width: 400px) {
+  #displayPalavra {
+    font-size: 1.8rem;
+    letter-spacing: 8px;
+  }
+  #inputLetra {
+    width: 90px;
+    font-size: 1.3rem;
+  }
+  select, button {
+    min-width: 100px;
+    font-size: 1rem;
+    padding: 10px 14px;
+  }
 }
