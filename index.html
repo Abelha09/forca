@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>🪓 Jogo da Forca</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        #letras {
+            font-size: 2em;
+            letter-spacing: 10px;
+            margin: 20px 0;
+        }
+        #erros {
+            color: #c00;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            font-size: 1.2em;
+            width: 50px;
+            text-align: center;
+        }
+        button {
+            font-size: 1em;
+            padding: 5px 15px;
+            margin-left: 10px;
+        }
+        #status {
+            font-size: 1.3em;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🪓 Jogo da Forca</h1>
+    <p id="letras">_ _ _ _ _ _</p>
+
+    <input type="text" id="letra" maxlength="1" />
+    <button onclick="verificar_letra()">Tentar Letra</button>
+
+    <p id="erros">Erros: </p>
+    <p id="status"></p>
+
+    <py-script>
+        from js import document
+
+        palavra = "PYTHON"
+        letras_descobertas = ["_"] * len(palavra)
+        letras_erradas = []
+        tentativas = 6
+
+        def atualizar_tela():
+            document.getElementById("letras").innerText = " ".join(letras_descobertas)
+            document.getElementById("erros").innerText = f"Erros: {', '.join(letras_erradas)} ({tentativas} restantes)"
+
+        def verificar_letra():
+            global tentativas
+            status = document.getElementById("status")
+            letra_input = document.getElementById("letra")
+            letra = letra_input.value.upper()
+            letra_input.value = ""
+            letra_input.focus()
+
+            if not letra or len(letra) != 1 or not letra.isalpha():
+                status.innerText = "Digite apenas uma letra válida."
+                return
+
+            if letra in letras_descobertas or letra in letras_erradas:
+                status.innerText = "Você já tentou essa letra."
+                return
+
+            if letra in palavra:
+                for i, l in enumerate(palavra):
+                    if l == letra:
+                        letras_descobertas[i] = letra
+                status.innerText = "Letra correta! 👍"
+            else:
+                letras_erradas.append(letra)
+                tentativas -= 1
+                status.innerText = "Letra errada! ❌"
+
+            atualizar_tela()
+
+            if "_" not in letras_descobertas:
+                status.innerText = f"🎉 Parabéns! Você venceu. A palavra era: {palavra}"
+            elif tentativas == 0:
+                status.innerText = f"💀 Fim de jogo. A palavra era: {palavra}"
+
+        atualizar_tela()
+    </py-script>
+</body>
+</html>
