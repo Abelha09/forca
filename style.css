@@ -1,150 +1,121 @@
-/* Reset */
+/* Reset e base */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-/* Dark mode background */
 body {
-  background: linear-gradient(135deg, #121212, #1e1e1e);
-  color: #eeeeee;
+  background-color: #121212;
+  color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 20px;
-}
-
-.container {
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  background: #222831;
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  transition: background-color 0.4s ease;
+  min-height: 100vh;
 }
 
 h1 {
+  color: #00e5ff;
   margin-bottom: 20px;
-  font-weight: 700;
-  color: #00adb5;
-  text-shadow: 0 0 10px #00adb5aa;
-  user-select: none;
+  text-shadow: 1px 1px 4px #00bcd4;
 }
 
-/* Canvas styles */
-#forcaCanvas {
-  border: 2px solid #00adb5;
-  border-radius: 8px;
+canvas {
+  background-color: #1e1e1e;
+  border: 2px solid #00e5ff;
+  border-radius: 10px;
   margin-bottom: 20px;
-  background-color: #393e46;
-  box-shadow: 0 0 20px #00adb5aa;
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
+}
+canvas:hover {
+  transform: scale(1.02);
 }
 
-/* Word display */
 #palavra {
-  font-size: 2rem;
-  letter-spacing: 0.3rem;
-  margin-bottom: 10px;
-  color: #eeeeee;
-  user-select: none;
-  text-shadow: 0 0 8px #00adb5cc;
-}
-
-/* Letters wrong */
-#letrasErradas {
-  color: #ff5722;
-  font-weight: 600;
-  user-select: none;
-  transition: color 0.3s ease;
-  min-height: 24px;
-}
-
-/* Input group */
-.input-group {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+  font-size: 24px;
+  letter-spacing: 8px;
+  margin: 20px 0;
+  color: #ffffff;
 }
 
 input[type="text"] {
-  font-size: 1.8rem;
   width: 50px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 2px solid #00adb5;
-  background-color: #222831;
-  color: #eeeeee;
+  height: 40px;
+  font-size: 24px;
   text-align: center;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-  user-select: none;
+  margin-right: 10px;
+  border: 2px solid #00e5ff;
+  border-radius: 5px;
+  background-color: #262626;
+  color: #fff;
+  transition: 0.2s ease-in-out;
 }
-
 input[type="text"]:focus {
   outline: none;
-  border-color: #ff5722;
-  background-color: #393e46;
-  box-shadow: 0 0 8px #ff5722aa;
+  border-color: #00ffff;
+  box-shadow: 0 0 5px #00e5ff;
 }
 
 button {
-  background-color: #00adb5;
-  border: none;
-  border-radius: 8px;
-  color: #222831;
-  font-size: 1.2rem;
-  font-weight: 700;
   padding: 10px 20px;
+  font-size: 18px;
+  background: linear-gradient(145deg, #00bcd4, #0097a7);
+  border: none;
+  color: #fff;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  user-select: none;
+  transition: transform 0.2s ease, background 0.3s;
 }
-
-button:hover:not(:disabled),
-button:focus:not(:disabled) {
-  background-color: #ff5722;
-  box-shadow: 0 0 12px #ff5722aa;
-  outline: none;
+button:hover {
+  background: linear-gradient(145deg, #00e5ff, #00bcd4);
+  transform: scale(1.05);
 }
-
 button:disabled {
-  background-color: #555;
+  background: #555;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
-/* Message styles */
+#letrasErradas {
+  color: #ff5252;
+  font-weight: bold;
+}
+
 #mensagem {
   margin-top: 20px;
-  font-weight: 700;
-  font-size: 1.3rem;
-  min-height: 28px;
-  color: #00adb5;
-  opacity: 0;
-  animation: fadeIn 0.6s forwards;
-  user-select: none;
-  text-shadow: 0 0 12px #00adb5cc;
+  font-size: 20px;
+  min-height: 30px;
+  transition: all 0.3s ease-in-out;
 }
 
-#mensagem.erro {
-  color: #ff5722;
-  text-shadow: 0 0 12px #ff5722cc;
+#config {
+  margin-top: 30px;
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  max-width: 400px;
+  width: 100%;
 }
 
-#mensagem.sucesso {
-  color: #4caf50;
-  text-shadow: 0 0 12px #4caf50cc;
+#config label,
+#config select {
+  display: block;
+  margin: 10px 0;
+  font-size: 16px;
+}
+#config select {
+  padding: 5px;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #00e5ff;
+  border-radius: 5px;
 }
 
-/* Fade in animation */
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
+footer {
+  margin-top: 40px;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
 }
