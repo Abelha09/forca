@@ -3,33 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Jogo da Forca</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Jogo da Forca 🕹️</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="container">
-    <h1>Jogo da Forca</h1>
+  <h1>🎯 Jogo da Forca Cartoon 🐵</h1>
 
-    <div id="selecaoDificuldade">
-      <label for="dificuldade">Escolha a dificuldade:</label>
-      <select id="dificuldade">
-        <option value="facil">Fácil</option>
-        <option value="medio">Médio</option>
-        <option value="dificil">Difícil</option>
-      </select>
-      <button id="btnNovoJogo">Novo Jogo</button>
-    </div>
-
-    <div id="jogo" style="display: none;">
-      <canvas id="forcaCanvas" width="200" height="200"></canvas>
-      <div id="displayPalavra"></div>
-      <input type="text" id="inputLetra" maxlength="1" placeholder="Digite uma letra" />
-      <div id="mensagem"></div>
-      <div id="displayLetrasErradas"></div>
-      <div id="tentativasRestantes"></div>
-    </div>
+  <div class="dificuldade-buttons">
+    <button id="btnFacil">😺 Fácil</button>
+    <button id="btnMedio">😼 Médio</button>
+    <button id="btnDificil">😾 Difícil</button>
+    <button id="btnNovoJogo">🔁 Novo Jogo</button>
   </div>
 
+  <canvas id="forcaCanvas" width="300" height="200"></canvas>
+
+  <div id="displayPalavra">_ _ _ _</div>
+  <div id="tentativasRestantes">Tentativas restantes: 6</div>
+  <div id="displayLetrasErradas">Letras erradas: </div>
+
+  <input type="text" id="inputLetra" maxlength="1" placeholder="A" />
+  <div id="mensagem"></div>
+
+  <footer>Desenvolvido com ❤️ em modo cartoon</footer>
+
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>
