@@ -9,72 +9,76 @@ let palavra = "";
 let letrasCorretas = [];
 let letrasErradas = [];
 let tentativas = 6;
-let statusJogo = "aguardando";
+let statusJogo = "jogando";
 
-const dificuldadeSelect = document.getElementById("dificuldade");
+const btnFacil = document.getElementById("btnFacil");
+const btnMedio = document.getElementById("btnMedio");
+const btnDificil = document.getElementById("btnDificil");
 const btnNovoJogo = document.getElementById("btnNovoJogo");
 const inputLetra = document.getElementById("inputLetra");
 const displayPalavra = document.getElementById("displayPalavra");
 const displayLetrasErradas = document.getElementById("displayLetrasErradas");
 const mensagem = document.getElementById("mensagem");
 const tentativasRestantes = document.getElementById("tentativasRestantes");
-const jogoDiv = document.getElementById("jogo");
 
 function escolherPalavra(nivel) {
-  const lista = nivel === "facil" ? palavrasFacil :
-                nivel === "medio" ? palavrasMedio :
-                palavrasDificil;
-  return lista[Math.floor(Math.random() * lista.length)];
-}
-
-function iniciarJogo() {
   letrasCorretas = [];
   letrasErradas = [];
   tentativas = 6;
   statusJogo = "jogando";
-  palavra = escolherPalavra(dificuldadeSelect.value);
   mensagem.textContent = "";
   inputLetra.value = "";
   inputLetra.disabled = false;
-  jogoDiv.style.display = "block";
   tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
-  atualizarDisplay();
+
+  if (nivel === "facil") {
+    palavra = palavrasFacil[Math.floor(Math.random() * palavrasFacil.length)];
+  } else if (nivel === "medio") {
+    palavra = palavrasMedio[Math.floor(Math.random() * palavrasMedio.length)];
+  } else {
+    palavra = palavrasDificil[Math.floor(Math.random() * palavrasDificil.length)];
+  }
   desenharForca();
+  atualizarDisplay();
 }
 
 function atualizarDisplay() {
   let display = "";
   for (let letra of palavra) {
-    display += letrasCorretas.includes(letra) ? letra + " " : "_ ";
+    if (letrasCorretas.includes(letra)) {
+      display += letra + " ";
+    } else {
+      display += "❓ ";
+    }
   }
   displayPalavra.textContent = display.trim();
-  displayLetrasErradas.textContent = "Letras erradas: " + letrasErradas.join(", ");
-  tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
+  displayLetrasErradas.textContent = "🚫 Letras erradas: " + letrasErradas.join(" ❌ ");
+  tentativasRestantes.textContent = `❤️ Tentativas restantes: ${tentativas}`;
 }
 
 function verificarLetra() {
   if (statusJogo !== "jogando") return;
 
-  const letra = inputLetra.value.toLowerCase();
+  let letra = inputLetra.value.toLowerCase();
   inputLetra.value = "";
 
   if (!letra.match(/^[a-záàâãéèêíïóôõöúçñ]$/i)) {
-    mensagem.textContent = "Por favor, digite uma letra válida.";
+    mensagem.textContent = "⚠️ Digite uma letra válida!";
     return;
   }
 
   if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
-    mensagem.textContent = "Você já tentou essa letra.";
+    mensagem.textContent = "🔁 Você já tentou essa letra.";
     return;
   }
 
   if (palavra.includes(letra)) {
     letrasCorretas.push(letra);
-    mensagem.textContent = "Boa! Letra correta.";
+    mensagem.textContent = "✅ Boa! Letra correta.";
   } else {
     letrasErradas.push(letra);
     tentativas--;
-    mensagem.textContent = "Letra incorreta!";
+    mensagem.textContent = "❌ Letra incorreta!";
   }
 
   atualizarDisplay();
@@ -85,21 +89,21 @@ function verificarLetra() {
 function verificarFimJogo() {
   if (tentativas <= 0) {
     statusJogo = "derrota";
-    mensagem.textContent = `Você perdeu! A palavra era: ${palavra}`;
+    mensagem.textContent = `💀 Você perdeu! A palavra era: ${palavra}`;
     inputLetra.disabled = true;
-  } else if (palavra.split("").every(l => letrasCorretas.includes(l))) {
+  } else if (palavra.split("").every(letra => letrasCorretas.includes(letra))) {
     statusJogo = "vitoria";
-    mensagem.textContent = "Parabéns! Você venceu!";
+    mensagem.textContent = "🎉 Parabéns! Você venceu!";
     inputLetra.disabled = true;
+    confetti(); // Ativa confete
   }
 }
 
 function desenharForca() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.lineWidth = 4;
-  ctx.strokeStyle = "#eee";
+  ctx.strokeStyle = "#333";
 
-  // base
   ctx.beginPath();
   ctx.moveTo(20, 180);
   ctx.lineTo(180, 180);
@@ -152,7 +156,18 @@ function desenharForca() {
 }
 
 // Eventos
-btnNovoJogo.addEventListener("click", iniciarJogo);
-inputLetra.addEventListener("keyup", function(e) {
-  if (e.key === "Enter") verificarLetra();
+btnFacil.addEventListener("click", () => escolherPalavra("facil"));
+btnMedio.addEventListener("click", () => escolherPalavra("medio"));
+btnDificil.addEventListener("click", () => escolherPalavra("dificil"));
+btnNovoJogo.addEventListener("click", () => {
+  escolherPalavra("facil");
+  mensagem.textContent = "";
 });
+inputLetra.addEventListener("keyup", function (event) {
+  if (event.key === "Enter") {
+    verificarLetra();
+  }
+});
+
+// Inicia o jogo
+escolherPalavra("facil");
