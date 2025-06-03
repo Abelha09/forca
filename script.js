@@ -1,5 +1,3 @@
-// script.js - Código corrigido sem sons e sem btnAdivinhar
-
 const canvas = document.getElementById("forcaCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -11,47 +9,43 @@ let palavra = "";
 let letrasCorretas = [];
 let letrasErradas = [];
 let tentativas = 6;
-let statusJogo = "jogando"; // "vitoria", "derrota", "jogando"
+let statusJogo = "aguardando";
 
-const btnFacil = document.getElementById("btnFacil");
-const btnMedio = document.getElementById("btnMedio");
-const btnDificil = document.getElementById("btnDificil");
+const dificuldadeSelect = document.getElementById("dificuldade");
 const btnNovoJogo = document.getElementById("btnNovoJogo");
 const inputLetra = document.getElementById("inputLetra");
 const displayPalavra = document.getElementById("displayPalavra");
 const displayLetrasErradas = document.getElementById("displayLetrasErradas");
 const mensagem = document.getElementById("mensagem");
 const tentativasRestantes = document.getElementById("tentativasRestantes");
+const jogoDiv = document.getElementById("jogo");
 
 function escolherPalavra(nivel) {
+  const lista = nivel === "facil" ? palavrasFacil :
+                nivel === "medio" ? palavrasMedio :
+                palavrasDificil;
+  return lista[Math.floor(Math.random() * lista.length)];
+}
+
+function iniciarJogo() {
   letrasCorretas = [];
   letrasErradas = [];
   tentativas = 6;
   statusJogo = "jogando";
+  palavra = escolherPalavra(dificuldadeSelect.value);
   mensagem.textContent = "";
   inputLetra.value = "";
   inputLetra.disabled = false;
+  jogoDiv.style.display = "block";
   tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
-
-  if (nivel === "facil") {
-    palavra = palavrasFacil[Math.floor(Math.random() * palavrasFacil.length)];
-  } else if (nivel === "medio") {
-    palavra = palavrasMedio[Math.floor(Math.random() * palavrasMedio.length)];
-  } else {
-    palavra = palavrasDificil[Math.floor(Math.random() * palavrasDificil.length)];
-  }
-  desenharForca();
   atualizarDisplay();
+  desenharForca();
 }
 
 function atualizarDisplay() {
   let display = "";
   for (let letra of palavra) {
-    if (letrasCorretas.includes(letra)) {
-      display += letra + " ";
-    } else {
-      display += "_ ";
-    }
+    display += letrasCorretas.includes(letra) ? letra + " " : "_ ";
   }
   displayPalavra.textContent = display.trim();
   displayLetrasErradas.textContent = "Letras erradas: " + letrasErradas.join(", ");
@@ -61,7 +55,7 @@ function atualizarDisplay() {
 function verificarLetra() {
   if (statusJogo !== "jogando") return;
 
-  let letra = inputLetra.value.toLowerCase();
+  const letra = inputLetra.value.toLowerCase();
   inputLetra.value = "";
 
   if (!letra.match(/^[a-záàâãéèêíïóôõöúçñ]$/i)) {
@@ -93,7 +87,7 @@ function verificarFimJogo() {
     statusJogo = "derrota";
     mensagem.textContent = `Você perdeu! A palavra era: ${palavra}`;
     inputLetra.disabled = true;
-  } else if (palavra.split("").every(letra => letrasCorretas.includes(letra))) {
+  } else if (palavra.split("").every(l => letrasCorretas.includes(l))) {
     statusJogo = "vitoria";
     mensagem.textContent = "Parabéns! Você venceu!";
     inputLetra.disabled = true;
@@ -105,13 +99,12 @@ function desenharForca() {
   ctx.lineWidth = 4;
   ctx.strokeStyle = "#eee";
 
-  // Base
+  // base
   ctx.beginPath();
   ctx.moveTo(20, 180);
   ctx.lineTo(180, 180);
   ctx.stroke();
 
-  // Poste
   ctx.beginPath();
   ctx.moveTo(50, 180);
   ctx.lineTo(50, 20);
@@ -119,44 +112,37 @@ function desenharForca() {
   ctx.lineTo(120, 40);
   ctx.stroke();
 
-  // Desenhar partes conforme tentativas erradas
   let erros = 6 - tentativas;
 
-  // Cabeça
   if (erros > 0) {
     ctx.beginPath();
     ctx.arc(120, 60, 20, 0, Math.PI * 2);
     ctx.stroke();
   }
-  // Corpo
   if (erros > 1) {
     ctx.beginPath();
     ctx.moveTo(120, 80);
     ctx.lineTo(120, 130);
     ctx.stroke();
   }
-  // Braço esquerdo
   if (erros > 2) {
     ctx.beginPath();
     ctx.moveTo(120, 90);
     ctx.lineTo(90, 110);
     ctx.stroke();
   }
-  // Braço direito
   if (erros > 3) {
     ctx.beginPath();
     ctx.moveTo(120, 90);
     ctx.lineTo(150, 110);
     ctx.stroke();
   }
-  // Perna esquerda
   if (erros > 4) {
     ctx.beginPath();
     ctx.moveTo(120, 130);
     ctx.lineTo(90, 160);
     ctx.stroke();
   }
-  // Perna direita
   if (erros > 5) {
     ctx.beginPath();
     ctx.moveTo(120, 130);
@@ -165,19 +151,8 @@ function desenharForca() {
   }
 }
 
-// Eventos dos botões e input
-btnFacil.addEventListener("click", () => escolherPalavra("facil"));
-btnMedio.addEventListener("click", () => escolherPalavra("medio"));
-btnDificil.addEventListener("click", () => escolherPalavra("dificil"));
-btnNovoJogo.addEventListener("click", () => {
-  escolherPalavra("facil");
-  mensagem.textContent = "";
+// Eventos
+btnNovoJogo.addEventListener("click", iniciarJogo);
+inputLetra.addEventListener("keyup", function(e) {
+  if (e.key === "Enter") verificarLetra();
 });
-inputLetra.addEventListener("keyup", function(event) {
-  if (event.key === "Enter") {
-    verificarLetra();
-  }
-});
-
-// Inicializa o jogo no modo fácil
-escolherPalavra("facil");
