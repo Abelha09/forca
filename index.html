@@ -9,21 +9,24 @@
 <body>
   <h1>🎯 Jogo da Forca Cartoon 🐵</h1>
 
-  <div class="dificuldade-buttons">
-    <button id="btnFacil">😺 Fácil</button>
-    <button id="btnMedio">😼 Médio</button>
-    <button id="btnDificil">😾 Difícil</button>
-    <button id="btnNovoJogo">🔁 Novo Jogo</button>
+  <!-- Tela de seleção -->
+  <div id="telaSelecao">
+    <p>Escolha o nível de dificuldade:</p>
+    <button onclick="escolherNivel('facil')">😺 Fácil</button>
+    <button onclick="escolherNivel('medio')">😼 Médio</button>
+    <button onclick="escolherNivel('dificil')">😾 Difícil</button>
   </div>
 
-  <canvas id="forcaCanvas" width="300" height="200"></canvas>
-
-  <div id="displayPalavra">_ _ _ _</div>
-  <div id="tentativasRestantes">Tentativas restantes: 6</div>
-  <div id="displayLetrasErradas">Letras erradas: </div>
-
-  <input type="text" id="inputLetra" maxlength="1" placeholder="A" />
-  <div id="mensagem"></div>
+  <!-- Tela do jogo -->
+  <div id="telaJogo" style="display:none;">
+    <canvas id="forcaCanvas" width="300" height="200"></canvas>
+    <div id="displayPalavra">_ _ _ _</div>
+    <div id="tentativasRestantes">Tentativas restantes: 6</div>
+    <div id="displayLetrasErradas">Letras erradas: </div>
+    <input type="text" id="inputLetra" maxlength="1" placeholder="A" />
+    <div id="mensagem"></div>
+    <button id="btnNovoJogo" onclick="voltarParaSelecao()">🔁 Voltar</button>
+  </div>
 
   <footer>Desenvolvido com ❤️ em modo cartoon</footer>
 
