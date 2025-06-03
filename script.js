@@ -1,173 +1,161 @@
-const canvas = document.getElementById("forcaCanvas");
-const ctx = canvas.getContext("2d");
+const palavras = {
+  facil: ["gato", "bola", "pato", "mala", "limao"],
+  medio: ["janela", "garrafa", "computador", "escola", "abacaxi"],
+  dificil: ["helicoptero", "programador", "psicologia", "transporte", "revolucionario"]
+};
 
-const palavrasFacil = ["gato", "bola", "casa", "pato", "fada"];
-const palavrasMedio = ["janela", "computador", "avião", "cachorro", "flor"];
-const palavrasDificil = ["programacao", "desenvolvimento", "extraordinario", "hipopotamo", "transcendente"];
-
-let palavra = "";
+let palavraSelecionada = "";
 let letrasCorretas = [];
 let letrasErradas = [];
 let tentativas = 6;
-let statusJogo = "jogando";
-
-const btnFacil = document.getElementById("btnFacil");
-const btnMedio = document.getElementById("btnMedio");
-const btnDificil = document.getElementById("btnDificil");
-const btnNovoJogo = document.getElementById("btnNovoJogo");
-const inputLetra = document.getElementById("inputLetra");
-const displayPalavra = document.getElementById("displayPalavra");
-const displayLetrasErradas = document.getElementById("displayLetrasErradas");
-const mensagem = document.getElementById("mensagem");
-const tentativasRestantes = document.getElementById("tentativasRestantes");
 
 function escolherPalavra(nivel) {
+  const lista = palavras[nivel];
+  palavraSelecionada = lista[Math.floor(Math.random() * lista.length)].toUpperCase();
   letrasCorretas = [];
   letrasErradas = [];
   tentativas = 6;
-  statusJogo = "jogando";
-  mensagem.textContent = "";
-  inputLetra.value = "";
-  inputLetra.disabled = false;
-  tentativasRestantes.textContent = `Tentativas restantes: ${tentativas}`;
 
-  if (nivel === "facil") {
-    palavra = palavrasFacil[Math.floor(Math.random() * palavrasFacil.length)];
-  } else if (nivel === "medio") {
-    palavra = palavrasMedio[Math.floor(Math.random() * palavrasMedio.length)];
-  } else {
-    palavra = palavrasDificil[Math.floor(Math.random() * palavrasDificil.length)];
-  }
-  desenharForca();
   atualizarDisplay();
+  desenharBoneco();
+  document.getElementById("mensagem").textContent = "";
+  document.getElementById("inputLetra").value = "";
+  document.getElementById("inputLetra").focus();
 }
 
 function atualizarDisplay() {
-  let display = "";
-  for (let letra of palavra) {
-    if (letrasCorretas.includes(letra)) {
-      display += letra + " ";
-    } else {
-      display += "❓ ";
+  const displayPalavra = palavraSelecionada
+    .split("")
+    .map((letra) => (letrasCorretas.includes(letra) ? letra : "_"))
+    .join(" ");
+
+  document.getElementById("displayPalavra").textContent = displayPalavra;
+  document.getElementById("tentativasRestantes").textContent = `❤️ Tentativas restantes: ${tentativas}`;
+  document.getElementById("displayLetrasErradas").textContent = `❌ Letras erradas: ${letrasErradas.join(", ")}`;
+
+  if (!displayPalavra.includes("_")) {
+    document.getElementById("mensagem").textContent = "🎉 Parabéns! Você venceu!";
+    soltarConfete();
+  } else if (tentativas === 0) {
+    document.getElementById("mensagem").textContent = `💀 Você perdeu! A palavra era: ${palavraSelecionada}`;
+  }
+}
+
+document.getElementById("inputLetra").addEventListener("keyup", function (e) {
+  if (e.key === "Enter" && this.value) {
+    const letra = this.value.toUpperCase();
+    this.value = "";
+
+    if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
+      document.getElementById("mensagem").textContent = "🔁 Letra já usada!";
+      return;
     }
+
+    if (palavraSelecionada.includes(letra)) {
+      letrasCorretas.push(letra);
+    } else {
+      letrasErradas.push(letra);
+      tentativas--;
+    }
+
+    atualizarDisplay();
+    desenharBoneco();
   }
-  displayPalavra.textContent = display.trim();
-  displayLetrasErradas.textContent = "🚫 Letras erradas: " + letrasErradas.join(" ❌ ");
-  tentativasRestantes.textContent = `❤️ Tentativas restantes: ${tentativas}`;
-}
+});
 
-function verificarLetra() {
-  if (statusJogo !== "jogando") return;
+function desenharBoneco() {
+  const canvas = document.getElementById("forcaCanvas");
+  const ctx = canvas.getContext("2d");
 
-  let letra = inputLetra.value.toLowerCase();
-  inputLetra.value = "";
-
-  if (!letra.match(/^[a-záàâãéèêíïóôõöúçñ]$/i)) {
-    mensagem.textContent = "⚠️ Digite uma letra válida!";
-    return;
-  }
-
-  if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
-    mensagem.textContent = "🔁 Você já tentou essa letra.";
-    return;
-  }
-
-  if (palavra.includes(letra)) {
-    letrasCorretas.push(letra);
-    mensagem.textContent = "✅ Boa! Letra correta.";
-  } else {
-    letrasErradas.push(letra);
-    tentativas--;
-    mensagem.textContent = "❌ Letra incorreta!";
-  }
-
-  atualizarDisplay();
-  desenharForca();
-  verificarFimJogo();
-}
-
-function verificarFimJogo() {
-  if (tentativas <= 0) {
-    statusJogo = "derrota";
-    mensagem.textContent = `💀 Você perdeu! A palavra era: ${palavra}`;
-    inputLetra.disabled = true;
-  } else if (palavra.split("").every(letra => letrasCorretas.includes(letra))) {
-    statusJogo = "vitoria";
-    mensagem.textContent = "🎉 Parabéns! Você venceu!";
-    inputLetra.disabled = true;
-    confetti(); // Ativa confete
-  }
-}
-
-function desenharForca() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.lineWidth = 4;
+
   ctx.strokeStyle = "#333";
+  ctx.lineWidth = 4;
 
-  ctx.beginPath();
-  ctx.moveTo(20, 180);
-  ctx.lineTo(180, 180);
-  ctx.stroke();
-
+  // Base
   ctx.beginPath();
   ctx.moveTo(50, 180);
-  ctx.lineTo(50, 20);
-  ctx.lineTo(120, 20);
-  ctx.lineTo(120, 40);
+  ctx.lineTo(250, 180);
   ctx.stroke();
 
-  let erros = 6 - tentativas;
+  // Poste vertical
+  ctx.beginPath();
+  ctx.moveTo(100, 180);
+  ctx.lineTo(100, 20);
+  ctx.stroke();
 
-  if (erros > 0) {
+  // Poste horizontal
+  ctx.beginPath();
+  ctx.moveTo(100, 20);
+  ctx.lineTo(200, 20);
+  ctx.stroke();
+
+  // Corda
+  ctx.beginPath();
+  ctx.moveTo(200, 20);
+  ctx.lineTo(200, 40);
+  ctx.stroke();
+
+  // Boneco cartoon (parte a parte)
+  if (tentativas <= 5) {
+    // Cabeça
     ctx.beginPath();
-    ctx.arc(120, 60, 20, 0, Math.PI * 2);
+    ctx.arc(200, 55, 15, 0, Math.PI * 2);
     ctx.stroke();
   }
-  if (erros > 1) {
+  if (tentativas <= 4) {
+    // Corpo
     ctx.beginPath();
-    ctx.moveTo(120, 80);
-    ctx.lineTo(120, 130);
+    ctx.moveTo(200, 70);
+    ctx.lineTo(200, 110);
     ctx.stroke();
   }
-  if (erros > 2) {
+  if (tentativas <= 3) {
+    // Braço esquerdo
     ctx.beginPath();
-    ctx.moveTo(120, 90);
-    ctx.lineTo(90, 110);
+    ctx.moveTo(200, 80);
+    ctx.lineTo(180, 100);
     ctx.stroke();
   }
-  if (erros > 3) {
+  if (tentativas <= 2) {
+    // Braço direito
     ctx.beginPath();
-    ctx.moveTo(120, 90);
-    ctx.lineTo(150, 110);
+    ctx.moveTo(200, 80);
+    ctx.lineTo(220, 100);
     ctx.stroke();
   }
-  if (erros > 4) {
+  if (tentativas <= 1) {
+    // Perna esquerda
     ctx.beginPath();
-    ctx.moveTo(120, 130);
-    ctx.lineTo(90, 160);
+    ctx.moveTo(200, 110);
+    ctx.lineTo(180, 140);
     ctx.stroke();
   }
-  if (erros > 5) {
+  if (tentativas <= 0) {
+    // Perna direita
     ctx.beginPath();
-    ctx.moveTo(120, 130);
-    ctx.lineTo(150, 160);
+    ctx.moveTo(200, 110);
+    ctx.lineTo(220, 140);
     ctx.stroke();
   }
 }
 
-// Eventos
-btnFacil.addEventListener("click", () => escolherPalavra("facil"));
-btnMedio.addEventListener("click", () => escolherPalavra("medio"));
-btnDificil.addEventListener("click", () => escolherPalavra("dificil"));
-btnNovoJogo.addEventListener("click", () => {
-  escolherPalavra("facil");
-  mensagem.textContent = "";
-});
-inputLetra.addEventListener("keyup", function (event) {
-  if (event.key === "Enter") {
-    verificarLetra();
-  }
-});
+function soltarConfete() {
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
+}
 
-// Inicia o jogo
-escolherPalavra("facil");
+// Controle de telas
+function escolherNivel(nivel) {
+  document.getElementById("telaSelecao").style.display = "none";
+  document.getElementById("telaJogo").style.display = "block";
+  escolherPalavra(nivel);
+}
+
+function voltarParaSelecao() {
+  document.getElementById("telaJogo").style.display = "none";
+  document.getElementById("telaSelecao").style.display = "block";
+}
